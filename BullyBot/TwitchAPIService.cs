@@ -95,37 +95,5 @@ namespace BullyBot
             await RevokeTokenClient.PostAsync($"https://id.twitch.tv/oauth2/revoke?client_id={clientId}&token=" + tokenData.access_token, new StringContent(""));
         }
     }
-    //the class for decoding the twitch api json into usable info
-    internal class TwitchAPIData
-    {
-        public Data[] data;
-        public Pagination pagination;
-    }
-    internal class Data
-    {
-        public string id;
-        public string user_id;
-        public string user_name;
-        public string game_id;
-        public string type;
-        public string title;
-        public int viewer_count;
-        public DateTime started_at;
-        public string language;
-        public string thumbnail_url;
-        public string[] tag_ids;
-    }
 
-    internal class Pagination
-    {
-        public string cursor;
-    }
-
-    //class for decoding the twitch token json into usable info
-    internal class TwitchTokenData
-    {
-        public string access_token;
-        public string expires_in;
-        public string token_type;
-    }
 }
