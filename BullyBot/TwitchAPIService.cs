@@ -4,10 +4,11 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading;
+using System.Timers;
 
 namespace BullyBot
 {
-    public class TwitchAPI
+    public class TwitchAPIService
     {
         private bool alreadySentMessage = false;
         private DiscordSocketClient client;
@@ -16,14 +17,21 @@ namespace BullyBot
         private readonly string clientId;
         private readonly string clientSecret;
 
-        public TwitchAPI(DiscordSocketClient _client)
+        private System.Timers.Timer timer;
+
+        public TwitchAPIService(DiscordSocketClient _client)
         {
             client = _client;
             clientId = Environment.GetEnvironmentVariable("TwitchClientId");
             clientSecret = Environment.GetEnvironmentVariable("TwitchClientSecret");
+
+            timer = new System.Timers.Timer(60000);
+            timer.Elapsed += PollTwitchAPI;
+            timer.AutoReset = true;
+            timer.Enabled = true;
         }
 
-        public async void StartTwitchAPICalls()
+        public async void PollTwitchAPI(object source, ElapsedEventArgs e)
         {
             using HttpClient TokenClient = new HttpClient();
 
@@ -85,15 +93,6 @@ namespace BullyBot
             //revokes oautho token
             using HttpClient RevokeTokenClient = new HttpClient();
             await RevokeTokenClient.PostAsync($"https://id.twitch.tv/oauth2/revoke?client_id={clientId}&token=" + tokenData.access_token, new StringContent(""));
-
-            //sleeps the thread for 1 minute
-            //this is to limit the amount of calls made to onece a minute
-            //this function is designed to run once a minute infinitly (or until the program crashes)
-            Thread.Sleep(60000);
-            StartTwitchAPICalls();
-
-
-
         }
     }
     //the class for decoding the twitch api json into usable info
