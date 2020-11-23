@@ -3,6 +3,7 @@ using Discord.Commands;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -26,7 +27,9 @@ namespace BullyBot.Modules
 
         private readonly string googleCX;
 
-        public InfoModule(CommandService service, ConfigService config)
+        private readonly TestService TestService;
+
+        public InfoModule(CommandService service, ConfigService config, TestService testService)
         {
             _service = service;
 
@@ -38,6 +41,8 @@ namespace BullyBot.Modules
 
             googleKey = Environment.GetEnvironmentVariable("GoogleKey");
             googleCX = Environment.GetEnvironmentVariable("GoogleCX");
+
+            TestService = testService;
         }
 
         [Command("help")]
@@ -217,6 +222,12 @@ namespace BullyBot.Modules
             {
                 await ReplyAsync("Invalid Schedule");
             }
+        }
+
+        [Command("test")]
+        public async Task TestAsync()
+        {
+            await ReplyAsync(TestService.GetValue());
         }
     }
 

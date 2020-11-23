@@ -2,16 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
-using AngleSharp.Media;
 using Discord;
 using Discord.Audio;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using YoutubeExplode;
-using YoutubeExplode.Playlists;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
 

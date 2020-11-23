@@ -26,4 +26,9 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\KeyValueConfig\KeyValueConfig\KeyValueConfig.csproj" />
+    <ProjectReference Include="..\..\ConfigurableServices\ConfigurableServices\ConfigurableServices.csproj" />
+  </ItemGroup>
+
 </Project>
