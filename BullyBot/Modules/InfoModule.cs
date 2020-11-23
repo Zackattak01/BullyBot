@@ -224,11 +224,6 @@ namespace BullyBot.Modules
             }
         }
 
-        [Command("test")]
-        public async Task TestAsync()
-        {
-            await ReplyAsync(TestService.GetValue());
-        }
     }
 
 
