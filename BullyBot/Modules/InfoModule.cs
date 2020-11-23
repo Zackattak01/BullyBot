@@ -27,9 +27,9 @@ namespace BullyBot.Modules
 
         private readonly string googleCX;
 
-        private readonly TestService TestService;
 
-        public InfoModule(CommandService service, ConfigService config, TestService testService)
+
+        public InfoModule(CommandService service, ConfigService config)
         {
             _service = service;
 
@@ -42,7 +42,6 @@ namespace BullyBot.Modules
             googleKey = Environment.GetEnvironmentVariable("GoogleKey");
             googleCX = Environment.GetEnvironmentVariable("GoogleCX");
 
-            TestService = testService;
         }
 
         [Command("help")]
