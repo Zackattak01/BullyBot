@@ -44,6 +44,7 @@ namespace BullyBot.Modules
         [Summary("It's a help command.  You get it.")]
         public async Task HelpAsync()
         {
+
             //gets all commannds
             List<CommandInfo> commands = _service.Commands.ToList();
 
@@ -169,11 +170,10 @@ namespace BullyBot.Modules
             //if it passes the censor complete the search
             else
             {
-
                 HttpClient Hclient = new HttpClient();
 
                 //gets the JSON search results
-                string url = $"https://www.googleapis.com/customsearch/v1?key={googleKey}&cx={googleCX}=items(link, title, pagemap/cse_thumbnail/src)&num=3&q=" + searchQuery;
+                string url = $"https://www.googleapis.com/customsearch/v1?key={googleKey}&cx={googleCX}&items=(link, title, pagemap/cse_thumbnail/src)&num=3&q=" + searchQuery;
                 HttpResponseMessage response = await Hclient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
