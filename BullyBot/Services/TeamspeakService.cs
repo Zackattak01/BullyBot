@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using ConfigurableServices;
 using Discord;
 using Discord.Audio;
 using Discord.WebSocket;
@@ -18,22 +19,24 @@ namespace BullyBot
         Unmuted
     }
 
-    public class TeamspeakService
+    public class TeamspeakService : ConfigurableService
     {
         private static readonly string path = Environment.CurrentDirectory + "/sounds/";
         private static readonly string configPath = Environment.CurrentDirectory + "/tsServiceState.txt";
         private readonly DiscordSocketClient client;
         private readonly ConfigService config;
 
-        private readonly Dictionary<SoundClip, string> clipPaths;
+        [ConfigureFromKey("TeamspeakSoundClips")]
+        protected Dictionary<SoundClip, string> clipPaths { get; set; }
 
         public bool Enabled { get { return config.TeamSpeakServiceState; } }
 
         public TeamspeakService(DiscordSocketClient client, ConfigService config)
+        : base(config)
         {
             this.client = client;
             this.config = config;
-            clipPaths = config.SoundClipPaths;
+
 
 
             if (Enabled)

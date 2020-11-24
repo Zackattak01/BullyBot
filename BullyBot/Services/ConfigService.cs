@@ -7,24 +7,15 @@ using ConfigurableServices;
 
 namespace BullyBot
 {
-    public class ConfigService
+    public class ConfigService : IConfigService
     {
         private readonly string ConfigPath;
 
-        private readonly Config config;
+        private readonly Config configPaths;
+
+        private Dictionary<string, object> config;
 
         public event Action ConfigUpdated;
-
-
-        public IEnumerable<string> CensoredWords { get; private set; }
-
-        //Constants
-        public string HalfDaySchedule { get; private set; }
-        public string FullDaySchedule { get; private set; }
-        public string BegginningBoilerplate { get; private set; }
-        public string EndingBoilerplate { get; private set; }
-
-        public Dictionary<SoundClip, string> SoundClipPaths { get; private set; }
 
 
         //State
@@ -47,29 +38,34 @@ namespace BullyBot
         {
             ConfigPath = Environment.CurrentDirectory + "/config";
 
-            config = new Config(ConfigPath + "/config.conf");
+            configPaths = new Config(ConfigPath + "/config.conf");
+
+            config = new Dictionary<string, object>();
 
             Reload();
         }
 
         public void Reload()
         {
-            config.Reload();
-            HalfDaySchedule = File.ReadAllText(ConfigPath + "/halfDaySchedule.txt");
-            FullDaySchedule = File.ReadAllText(ConfigPath + "/fullDaySchedule.txt");
-            BegginningBoilerplate = File.ReadAllText(ConfigPath + "/begginningBoilerplate.cs");
-            EndingBoilerplate = File.ReadAllText(ConfigPath + "/endingBoilerplate.cs");
-            CensoredWords = File.ReadAllLines(ConfigPath + "/badwords.txt");
+            configPaths.Reload();
+            config.Clear();
+            config.Add("HalfDaySchedule", File.ReadAllText(configPaths.GetValue("HalfDaySchedulePath")));
+            config.Add("FullDaySchedule", File.ReadAllText(configPaths.GetValue("FullDaySchedulePath")));
+            config.Add("BegginingBoilerPlate", File.ReadAllText(configPaths.GetValue("BegginningBoilerplatePath")));
+            config.Add("EndingBoilerplate", File.ReadAllText(configPaths.GetValue("EndingBoilerplatePath")));
+            config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
             string soundPath = ConfigPath + "/sounds/";
-            SoundClipPaths = new Dictionary<SoundClip, string>();
-            SoundClipPaths.Add(SoundClip.Connected, soundPath + "connected.wav");
-            SoundClipPaths.Add(SoundClip.Kicked, soundPath + "kicked.wav");
-            SoundClipPaths.Add(SoundClip.Disconnected, soundPath + "disconnected.wav");
-            SoundClipPaths.Add(SoundClip.Muted, soundPath + "muted.wav");
-            SoundClipPaths.Add(SoundClip.Unmuted, soundPath + "unmuted.wav");
+            Dictionary<SoundClip, string> SoundClipPaths = new Dictionary<SoundClip, string>();
+            SoundClipPaths.Add(SoundClip.Connected, configPaths.GetValue("ConnectedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Kicked, configPaths.GetValue("ConnectedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Disconnected, configPaths.GetValue("ConnectedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Muted, configPaths.GetValue("ConnectedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Unmuted, configPaths.GetValue("ConnectedSoundPath"));
 
-            _teamSpeakServiceState = bool.Parse(File.ReadAllText(ConfigPath + "/tsServiceState.txt"));
+            config.Add("TeamspeakSoundClips", SoundClipPaths);
+
+            _teamSpeakServiceState = bool.Parse(File.ReadAllText(configPaths.GetValue("tsServiceStatePath")));
 
             if (ConfigUpdated != null)
                 ConfigUpdated();
@@ -77,7 +73,14 @@ namespace BullyBot
 
         public string GetValue(string key)
         {
-            return config.GetValue(key);
+            throw new NotImplementedException();
+            return config[key] as string;
+        }
+
+        public T GetValue<T>(string key)
+            where T : class
+        {
+            return config[key] as T;
         }
     }
 }

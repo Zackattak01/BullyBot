@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using ConfigurableServices;
+using Discord;
 using Discord.Commands;
 using Newtonsoft.Json;
 using System;
@@ -33,11 +34,11 @@ namespace BullyBot.Modules
         {
             _service = service;
 
-            var censoredWords = config.CensoredWords;
+            var censoredWords = config.GetValue<IEnumerable<string>>("CensoredWords");
             censor = new Censor(censoredWords);
 
-            halfDaySchedule = config.HalfDaySchedule;
-            fullDaySchedule = config.FullDaySchedule;
+            halfDaySchedule = config.GetValue<string>("HalfDaySchedule");
+            fullDaySchedule = config.GetValue<string>("FullDaySchedule");
 
             googleKey = Environment.GetEnvironmentVariable("GoogleKey");
             googleCX = Environment.GetEnvironmentVariable("GoogleCX");
