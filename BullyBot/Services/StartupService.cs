@@ -17,8 +17,8 @@ namespace BullyBot
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
 
-        [ConfigureFromKey("BetaBotId")]
-        private ulong BetaBotId;
+        [ConfigureFromKey("MainBotId")]
+        private ulong MainBotId;
 
         public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfigService config)
             : base(config)
@@ -41,7 +41,7 @@ namespace BullyBot
 
                 //Checks if the bot is the beta bot or not
                 //If the bot is beta it will not connect to twitch
-                if (_client.CurrentUser.Id == BetaBotId)
+                if (_client.CurrentUser.Id == MainBotId)
                 {
                     _provider.GetRequiredService<TwitchAPIService>();
                 }

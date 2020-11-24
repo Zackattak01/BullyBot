@@ -42,11 +42,14 @@ namespace BullyBot
             config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
             //add ids
-            ulong betaId = ulong.Parse(configPaths.GetValue("BetaBotId"));
-            config.Add("BetaBotId", betaId);
+            ulong betaId = ulong.Parse(configPaths.GetValue("MainBotId"));
+            config.Add("MainBotId", betaId);
 
             ulong ownerId = ulong.Parse(configPaths.GetValue("OwnerId"));
             config.Add("OwnerId", ownerId);
+
+            ulong channelId = ulong.Parse(configPaths.GetValue("StreamingChannelId"));
+            config.Add("StreamingChannelId", channelId);
 
             string soundPath = ConfigPath + "/sounds/";
             Dictionary<SoundClip, string> SoundClipPaths = new Dictionary<SoundClip, string>();
