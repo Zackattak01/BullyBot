@@ -18,21 +18,19 @@ namespace BullyBot.Modules
 
         private readonly Censor censor;
 
-        private readonly CommandService _service;
+        private readonly CommandService commandService;
+
+        private readonly GoogleSearchService searchService;
 
         private readonly string halfDaySchedule;
 
         private readonly string fullDaySchedule;
 
-        private readonly string googleKey;
-
-        private readonly string googleCX;
 
 
-
-        public InfoModule(CommandService service, IConfigService config)
+        public InfoModule(CommandService service, GoogleSearchService searchService, IConfigService config)
         {
-            _service = service;
+            commandService = service;
 
             var censoredWords = config.GetValue<IEnumerable<string>>("CensoredWords");
             censor = new Censor(censoredWords);
@@ -40,9 +38,8 @@ namespace BullyBot.Modules
             halfDaySchedule = config.GetValue<string>("HalfDaySchedule");
             fullDaySchedule = config.GetValue<string>("FullDaySchedule");
 
-            googleKey = Environment.GetEnvironmentVariable("GoogleKey");
-            googleCX = Environment.GetEnvironmentVariable("GoogleCX");
 
+            this.searchService = searchService;
         }
 
         [Command("help")]
@@ -51,7 +48,7 @@ namespace BullyBot.Modules
         {
 
             //gets all commannds
-            List<CommandInfo> commands = _service.Commands.ToList();
+            List<CommandInfo> commands = commandService.Commands.ToList();
 
             //creates new embed with the color purple
             EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -143,16 +140,8 @@ namespace BullyBot.Modules
         [Command("google")]
         [Alias("g", "search", "s")]
         [Summary("Returns the top result from the search query")]
-        public async Task GoogleAsyc(params string[] query)
+        public async Task GoogleAsyc([Remainder] string searchQuery)
         {
-            //compounds everything in "query" into the following string
-            string searchQuery = "";
-
-            foreach (var item in query)
-            {
-                searchQuery += $"{item} ";
-            }
-
             //checks if the search fails the censor
             if (censor.CensorText(searchQuery))
             {
@@ -175,18 +164,9 @@ namespace BullyBot.Modules
             //if it passes the censor complete the search
             else
             {
-                HttpClient Hclient = new HttpClient();
+                GoogleResults searchResults = await searchService.SearchAsync(searchQuery);
 
-                //gets the JSON search results
-                string url = $"https://www.googleapis.com/customsearch/v1?key={googleKey}&cx={googleCX}&items=(link, title, pagemap/cse_thumbnail/src)&num=3&q=" + searchQuery;
-                HttpResponseMessage response = await Hclient.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-
-                //decodes the json as a GoogleResults type
-                string jsonString = await response.Content.ReadAsStringAsync();
-                GoogleResults parsedJson = JsonConvert.DeserializeObject<GoogleResults>(jsonString);
-
-                //the folliwng code is responsible for bulding the embed and sending it
+                //the following code is responsible for bulding the embed and sending it
                 EmbedAuthorBuilder EAB = new EmbedAuthorBuilder()
                 {
                     Name = "Main Result:"
@@ -195,12 +175,15 @@ namespace BullyBot.Modules
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                 {
                     Author = EAB,
-                    Title = parsedJson.items[0].title,
-                    Url = parsedJson.items[0].link,
-                    ThumbnailUrl = parsedJson.items[0].pagemap.cse_thumbnail[0].src,
+                    Title = searchResults.items[0].title,
+                    Url = searchResults.items[0].link,
+                    ThumbnailUrl = searchResults.items[0].pagemap.cse_thumbnail[0].src,
                     Color = new Color?(new Color(66, 133, 244)),
                     Footer = new EmbedFooterBuilder().WithText("Search Requested").WithIconUrl("https://cdn4.iconfinder.com/data/icons/new-google-logo-2015/400/new-google-favicon-512.png")
-                }.AddField("Result 2", "[" + parsedJson.items[1].title + "](" + parsedJson.items[1].link + ")", false).AddField("Result 3", "[" + parsedJson.items[2].title + "](" + parsedJson.items[2].link + ")", false).WithCurrentTimestamp();
+                }
+                .AddField("Result 2", "[" + searchResults.items[1].title + "](" + searchResults.items[1].link + ")", false)
+                .AddField("Result 3", "[" + searchResults.items[2].title + "](" + searchResults.items[2].link + ")", false)
+                .WithCurrentTimestamp();
                 await ReplyAsync(embed: embedBuilder.Build());
 
             }
