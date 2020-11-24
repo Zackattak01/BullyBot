@@ -23,14 +23,14 @@ namespace BullyBot
     {
         private static readonly string stateFile = Environment.CurrentDirectory + "/tsServiceState.txt";
         private readonly DiscordSocketClient client;
-        private readonly ConfigService config;
+        private readonly IConfigService config;
 
         [ConfigureFromKey("TeamspeakSoundClips")]
         private Dictionary<SoundClip, string> ClipPaths { get; set; }
 
         public bool Enabled { get; private set; }
 
-        public TeamspeakService(DiscordSocketClient client, ConfigService config)
+        public TeamspeakService(DiscordSocketClient client, IConfigService config)
         : base(config)
         {
             this.client = client;

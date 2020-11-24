@@ -13,28 +13,30 @@ using System.Runtime.Loader;
 
 namespace BullyBot.Modules
 {
-	public class CodeModule : ModuleBase<SocketCommandContext>
-	{
-		[Command("execute")]
-		[RequireOwner]
-		public async Task ExecuteAsync([Remainder] string code)
-		{
+    public class CodeModule : ModuleBase<SocketCommandContext>
+    {
+        public CodeHelperService CodeHelper { get; set; }
 
-			string validCode = CodeHelper.CreateValidCode(code);
+        [Command("execute")]
+        [RequireOwner]
+        public async Task ExecuteAsync([Remainder] string code)
+        {
 
-			(UnloadableAssemblyLoadContext alc, string errors) = CodeHelper.CompileAndLoadAssembly(validCode);
+            string validCode = CodeHelper.CreateValidCode(code);
 
-			if(errors != "")
-			{
-				await ReplyAsync(errors);
-				return;
-			}
+            (UnloadableAssemblyLoadContext alc, string errors) = CodeHelper.CompileAndLoadAssembly(validCode);
 
-			CodeHelper.ExecuteCodeAndUnloadAssembly(alc, Context);
+            if (errors != "")
+            {
+                await ReplyAsync(errors);
+                return;
+            }
+
+            CodeHelper.ExecuteCodeAndUnloadAssembly(alc, Context);
 
 
-		}
+        }
 
 
-	}
+    }
 }

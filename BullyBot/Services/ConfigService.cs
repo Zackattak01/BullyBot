@@ -20,6 +20,7 @@ namespace BullyBot
 
         public ConfigService()
         {
+            System.Console.WriteLine("Created");
             ConfigPath = Environment.CurrentDirectory + "/config";
 
             configPaths = new Config(ConfigPath + "/config.conf");
@@ -36,7 +37,7 @@ namespace BullyBot
             config.Clear();
             config.Add("HalfDaySchedule", File.ReadAllText(configPaths.GetValue("HalfDaySchedulePath")));
             config.Add("FullDaySchedule", File.ReadAllText(configPaths.GetValue("FullDaySchedulePath")));
-            config.Add("BegginingBoilerPlate", File.ReadAllText(configPaths.GetValue("BegginningBoilerplatePath")));
+            config.Add("BegginningBoilerplate", File.ReadAllText(configPaths.GetValue("BegginningBoilerplatePath")));
             config.Add("EndingBoilerplate", File.ReadAllText(configPaths.GetValue("EndingBoilerplatePath")));
             config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
