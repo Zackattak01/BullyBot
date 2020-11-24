@@ -1,8 +1,10 @@
-﻿using Discord;
+﻿using ConfigurableServices;
+using Discord;
 using Discord.Commands;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -26,24 +28,28 @@ namespace BullyBot.Modules
 
         private readonly string googleCX;
 
+
+
         public InfoModule(CommandService service, ConfigService config)
         {
             _service = service;
 
-            var censoredWords = config.CensoredWords;
+            var censoredWords = config.GetValue<IEnumerable<string>>("CensoredWords");
             censor = new Censor(censoredWords);
 
-            halfDaySchedule = config.HalfDaySchedule;
-            fullDaySchedule = config.FullDaySchedule;
+            halfDaySchedule = config.GetValue<string>("HalfDaySchedule");
+            fullDaySchedule = config.GetValue<string>("FullDaySchedule");
 
             googleKey = Environment.GetEnvironmentVariable("GoogleKey");
             googleCX = Environment.GetEnvironmentVariable("GoogleCX");
+
         }
 
         [Command("help")]
         [Summary("It's a help command.  You get it.")]
         public async Task HelpAsync()
         {
+
             //gets all commannds
             List<CommandInfo> commands = _service.Commands.ToList();
 
@@ -169,11 +175,10 @@ namespace BullyBot.Modules
             //if it passes the censor complete the search
             else
             {
-
                 HttpClient Hclient = new HttpClient();
 
                 //gets the JSON search results
-                string url = $"https://www.googleapis.com/customsearch/v1?key={googleKey}&cx={googleCX}=items(link, title, pagemap/cse_thumbnail/src)&num=3&q=" + searchQuery;
+                string url = $"https://www.googleapis.com/customsearch/v1?key={googleKey}&cx={googleCX}&items=(link, title, pagemap/cse_thumbnail/src)&num=3&q=" + searchQuery;
                 HttpResponseMessage response = await Hclient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
@@ -218,6 +223,7 @@ namespace BullyBot.Modules
                 await ReplyAsync("Invalid Schedule");
             }
         }
+
     }
 
 
