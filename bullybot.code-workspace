@@ -4,5 +4,11 @@
 			"path": "BullyBot"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude":{
+			"**/obj": true,
+			"**/bin": true,
+			"**/.vscode": true,
+		}
+	}
 }

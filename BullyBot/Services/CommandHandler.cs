@@ -24,11 +24,8 @@ namespace BullyBot
             //the following logic confirms that the message is from a user and is used in the correct place (unless the user is an admin)
             if (!(messageParam is SocketUserMessage message))
                 return;
+
             SocketGuildUser socketGuildUser = messageParam.Author as SocketGuildUser;
-            if ((message.Channel.Id != 708110278818005002 && message.Channel.Id != 682042884748345414) && !socketGuildUser.GuildPermissions.Administrator)
-                return;
-            //if (message.Channel.Id != 682042884748345414 && !socketGuildUser.GuildPermissions.Administrator)
-            //	return;
 
             //checks that the message is indeed a command to be handled by this bot
             int argPos = 0;
