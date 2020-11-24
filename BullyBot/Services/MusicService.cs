@@ -72,15 +72,6 @@ namespace BullyBot
         {
             StreamManifest manifest = await GetManifestAsync(video);
 
-            // System.Console.WriteLine(video.Duration);
-            // foreach (var stream in manifest.GetAudio())
-            // {
-            //     System.Console.WriteLine(stream.Size);
-            //     System.Console.WriteLine(stream.AudioCodec);
-            //     System.Console.WriteLine(stream.Bitrate);
-            //     System.Console.WriteLine();
-            // }
-
             IStreamInfo streamInfo = manifest.GetAudioOnly().WithHighestBitrate();
             System.Console.WriteLine(streamInfo.Bitrate);
             return await youtube.Videos.Streams.GetAsync(streamInfo);

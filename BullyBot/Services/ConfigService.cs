@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using KeyValueConfig;
 using ConfigurableServices;
+using System.Net;
 
 namespace BullyBot
 {
@@ -39,6 +40,13 @@ namespace BullyBot
             config.Add("BegginningBoilerplate", File.ReadAllText(configPaths.GetValue("BegginningBoilerplatePath")));
             config.Add("EndingBoilerplate", File.ReadAllText(configPaths.GetValue("EndingBoilerplatePath")));
             config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
+
+            //add ids
+            ulong betaId = ulong.Parse(configPaths.GetValue("BetaBotId"));
+            config.Add("BetaBotId", betaId);
+
+            ulong ownerId = ulong.Parse(configPaths.GetValue("OwnerId"));
+            config.Add("OwnerId", ownerId);
 
             string soundPath = ConfigPath + "/sounds/";
             Dictionary<SoundClip, string> SoundClipPaths = new Dictionary<SoundClip, string>();
