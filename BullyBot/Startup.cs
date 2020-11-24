@@ -26,6 +26,7 @@ namespace BullyBot
             provider.GetRequiredService<RoomService>();
             provider.GetRequiredService<TeamspeakService>();
             provider.GetRequiredService<ConfigService>();
+            provider.GetRequiredService<MusicService>();
             await provider.GetRequiredService<StartupService>().MainAsync();
             await Task.Delay(-1);
         }
@@ -50,7 +51,8 @@ namespace BullyBot
             .AddSingleton<RoomService>()
             .AddSingleton<TeamspeakService>()
             .AddSingleton<ConfigService>()
-            .AddSingleton<TwitchAPIService>();
+            .AddSingleton<TwitchAPIService>()
+            .AddSingleton<MusicService>();
 
             // Add loggingservice to the collection													
             //.AddSingleton<Random>()                 // Add random to the collection													
