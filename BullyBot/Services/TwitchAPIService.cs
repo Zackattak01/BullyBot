@@ -1,14 +1,17 @@
-﻿using Discord;
+﻿using ConfigurableServices;
+using Discord;
 using Discord.WebSocket;
+using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace BullyBot
 {
-    public class TwitchAPIService
+    public class TwitchAPIService : ConfigurableService
     {
         private bool alreadySentMessage = false;
         private DiscordSocketClient client;
@@ -19,11 +22,19 @@ namespace BullyBot
 
         private System.Timers.Timer timer;
 
-        public TwitchAPIService(DiscordSocketClient _client)
+        private HttpClient httpClient;
+
+        [ConfigureFromKey("StreamingChannelId")]
+        private ulong streamingChannelId;
+
+        public TwitchAPIService(DiscordSocketClient _client, HttpClient httpClient, IConfigService config)
+            : base(config)
         {
             client = _client;
             clientId = Environment.GetEnvironmentVariable("TwitchClientId");
             clientSecret = Environment.GetEnvironmentVariable("TwitchClientSecret");
+
+            this.httpClient = httpClient;
 
             timer = new System.Timers.Timer(60000);
             timer.Elapsed += PollTwitchAPI;
@@ -31,31 +42,13 @@ namespace BullyBot
             timer.Enabled = true;
         }
 
+        //this is async/void because it is an event handler
         public async void PollTwitchAPI(object source, ElapsedEventArgs e)
         {
-            using HttpClient TokenClient = new HttpClient();
 
-            //gets oauth token
-            HttpResponseMessage rep = await TokenClient.PostAsync($"https://id.twitch.tv/oauth2/token?client_id={clientId}&client_secret={clientSecret}&grant_type=client_credentials", new StringContent(""));
-            string str = await rep.Content.ReadAsStringAsync();
-            TwitchTokenData tokenData = JsonConvert.DeserializeObject<TwitchTokenData>(str);
+            TwitchTokenData tokenData = await GetTokenAsync();
 
-
-            using HttpClient Hclient = new HttpClient();
-            //configures headers
-            Hclient.BaseAddress = new Uri("https://api.twitch.tv/helix/streams");
-            Hclient.DefaultRequestHeaders.Add("Client-ID", clientId);
-            Hclient.DefaultRequestHeaders.Add("Authorization", "Bearer " + tokenData.access_token);
-            string url = "?user_login=bottoilet";
-
-
-            //makes request and ensures success
-            HttpResponseMessage response = await Hclient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-
-            //converts JSON to TwitchAPIData
-            string resp = await response.Content.ReadAsStringAsync();
-            TwitchAPIData data = JsonConvert.DeserializeObject<TwitchAPIData>(resp);
+            TwitchAPIData data = await RequestTwitchDataAsync(tokenData);
 
 
             //checks if BotToilet is streaming and that the message explaining so has not been sent already
@@ -73,14 +66,14 @@ namespace BullyBot
                 {
                     Author = embedAuthorBuilder,
                     Color = new Color?(Color.Purple),
-                    ImageUrl = "https://static-cdn.jtvnw.net/previews-ttv/live_user_bottoilet-1920x1080.jpg?r=" + new Random().Next().ToString(),
+                    ImageUrl = "https://static-cdn.jtvnw.net/previews-ttv/live_user_bottoilet-1920x1080.jpg?r=" + new Random().Next().ToString(), //cache buster
                     Description = "https://www.twitch.tv/bottoilet"
                 };
                 embedBuilder.AddField("Title", data.data[0].title, true);
                 embedBuilder.AddField("Started (Eastern Time):", data.data[0].started_at.ToLocalTime(), true);
 
                 //gets the streaming channel and send messages
-                channel = client.GetChannel(708101323463327816) as ISocketMessageChannel;
+                channel = client.GetChannel(streamingChannelId) as ISocketMessageChannel;
                 await channel.SendMessageAsync("BotToilet has gone live on Twitch!", embed: embedBuilder.Build());
 
                 alreadySentMessage = true;
@@ -90,9 +83,44 @@ namespace BullyBot
             else if (data.data.Length == 0 && alreadySentMessage)
                 alreadySentMessage = false;
 
+            await RevokeTokenAsync(tokenData);
+        }
+
+        private async Task<TwitchTokenData> GetTokenAsync()
+        {
+            //gets oauth token
+            HttpResponseMessage rep = await this.httpClient.PostAsync($"https://id.twitch.tv/oauth2/token?client_id={clientId}&client_secret={clientSecret}&grant_type=client_credentials", new StringContent(""));
+            string str = await rep.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TwitchTokenData>(str);
+        }
+
+        private async Task<TwitchAPIData> RequestTwitchDataAsync(TwitchTokenData tokenData)
+        {
+            //configures headers
+            this.httpClient.BaseAddress = new Uri("https://api.twitch.tv/helix/streams");
+            this.httpClient.DefaultRequestHeaders.Add("Client-ID", clientId);
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + tokenData.access_token);
+            string url = "?user_login=bottoilet";
+
+
+            //makes request and ensures success
+            HttpResponseMessage response = await this.httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            //converts JSON to TwitchAPIData
+            string resp = await response.Content.ReadAsStringAsync();
+            TwitchAPIData data = JsonConvert.DeserializeObject<TwitchAPIData>(resp);
+
+            //Clean up
+            this.httpClient.DefaultRequestHeaders.Clear();
+
+            return data;
+        }
+
+        private async Task RevokeTokenAsync(TwitchTokenData tokenData)
+        {
             //revokes oautho token
-            using HttpClient RevokeTokenClient = new HttpClient();
-            await RevokeTokenClient.PostAsync($"https://id.twitch.tv/oauth2/revoke?client_id={clientId}&token=" + tokenData.access_token, new StringContent(""));
+            await httpClient.PostAsync($"https://id.twitch.tv/oauth2/revoke?client_id={clientId}&token=" + tokenData.access_token, new StringContent(""));
         }
     }
 
