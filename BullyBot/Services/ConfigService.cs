@@ -43,10 +43,10 @@ namespace BullyBot
             string soundPath = ConfigPath + "/sounds/";
             Dictionary<SoundClip, string> SoundClipPaths = new Dictionary<SoundClip, string>();
             SoundClipPaths.Add(SoundClip.Connected, configPaths.GetValue("ConnectedSoundPath"));
-            SoundClipPaths.Add(SoundClip.Kicked, configPaths.GetValue("ConnectedSoundPath"));
-            SoundClipPaths.Add(SoundClip.Disconnected, configPaths.GetValue("ConnectedSoundPath"));
-            SoundClipPaths.Add(SoundClip.Muted, configPaths.GetValue("ConnectedSoundPath"));
-            SoundClipPaths.Add(SoundClip.Unmuted, configPaths.GetValue("ConnectedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Kicked, configPaths.GetValue("KickedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Disconnected, configPaths.GetValue("DisconnectedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Muted, configPaths.GetValue("MutedSoundPath"));
+            SoundClipPaths.Add(SoundClip.Unmuted, configPaths.GetValue("UnmutedSoundPath"));
 
             config.Add("TeamspeakSoundClips", SoundClipPaths);
 
