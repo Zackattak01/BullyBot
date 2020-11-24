@@ -30,7 +30,7 @@ namespace BullyBot.Modules
 
 
 
-        public InfoModule(CommandService service, ConfigService config)
+        public InfoModule(CommandService service, IConfigService config)
         {
             _service = service;
 

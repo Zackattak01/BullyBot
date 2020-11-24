@@ -21,44 +21,50 @@ namespace BullyBot
 
     public class TeamspeakService : ConfigurableService
     {
-        private static readonly string path = Environment.CurrentDirectory + "/sounds/";
-        private static readonly string configPath = Environment.CurrentDirectory + "/tsServiceState.txt";
+        private static readonly string stateFile = Environment.CurrentDirectory + "/tsServiceState.txt";
         private readonly DiscordSocketClient client;
-        private readonly ConfigService config;
+        private readonly IConfigService config;
 
         [ConfigureFromKey("TeamspeakSoundClips")]
-        protected Dictionary<SoundClip, string> clipPaths { get; set; }
+        private Dictionary<SoundClip, string> ClipPaths { get; set; }
 
-        public bool Enabled { get { return config.TeamSpeakServiceState; } }
+        public bool Enabled { get; private set; }
 
-        public TeamspeakService(DiscordSocketClient client, ConfigService config)
+        public TeamspeakService(DiscordSocketClient client, IConfigService config)
         : base(config)
         {
             this.client = client;
             this.config = config;
 
-
+            Enabled = bool.Parse(File.ReadAllText(stateFile));
 
             if (Enabled)
                 _ = Enable();
         }
 
-        public Task Enable()
+        public async Task Enable()
         {
 
             client.UserVoiceStateUpdated += UserVoiceStateUpdated;
 
-            config.TeamSpeakServiceState = true;
-            return Task.CompletedTask;
+            Enabled = true;
+
+            await WriteState();
         }
 
-        public Task Disable()
+        public async Task Disable()
         {
 
             client.UserVoiceStateUpdated -= UserVoiceStateUpdated;
 
-            config.TeamSpeakServiceState = false;
-            return Task.CompletedTask;
+            Enabled = false;
+
+            await WriteState();
+        }
+
+        public async Task WriteState()
+        {
+            await File.WriteAllTextAsync(stateFile, Enabled.ToString());
         }
 
         private Task UserVoiceStateUpdated(SocketUser arg1, SocketVoiceState oldState, SocketVoiceState newState)
@@ -76,34 +82,34 @@ namespace BullyBot
                 if (newState.VoiceChannel == null && oldState.VoiceChannel != null)
                 {
                     channel = oldState.VoiceChannel;
-                    audioClipPath = clipPaths[SoundClip.Disconnected];
+                    audioClipPath = ClipPaths[SoundClip.Disconnected];
                 }
                 //connect
                 if (newState.VoiceChannel != null && oldState.VoiceChannel == null)
                 {
                     channel = newState.VoiceChannel;
-                    audioClipPath = clipPaths[SoundClip.Connected];
+                    audioClipPath = ClipPaths[SoundClip.Connected];
                 }
 
                 //server muted
                 if (newState.IsMuted && !oldState.IsMuted)
                 {
                     channel = newState.VoiceChannel;
-                    audioClipPath = clipPaths[SoundClip.Muted];
+                    audioClipPath = ClipPaths[SoundClip.Muted];
                 }
 
                 //un server muted
                 if (!newState.IsMuted && oldState.IsMuted)
                 {
                     channel = newState.VoiceChannel;
-                    audioClipPath = clipPaths[SoundClip.Unmuted];
+                    audioClipPath = ClipPaths[SoundClip.Unmuted];
                 }
 
                 //move
                 if (newState.VoiceChannel != null && oldState.VoiceChannel != null && newState.VoiceChannel.Id != oldState.VoiceChannel.Id)
                 {
                     channel = newState.VoiceChannel;
-                    audioClipPath = clipPaths[SoundClip.Connected];
+                    audioClipPath = ClipPaths[SoundClip.Connected];
                 }
 
                 if (channel != null && audioClipPath != null)

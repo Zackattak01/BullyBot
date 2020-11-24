@@ -5,22 +5,22 @@ using System.Threading.Tasks;
 
 namespace BullyBot
 {
-	public class LoggingService
-	{
-		//this service is responsible for sending log messages
+    public class LoggingService
+    {
+        //this service is responsible for sending log messages
 
-		private readonly DiscordSocketClient _client;
+        private readonly DiscordSocketClient _client;
 
-		public LoggingService(DiscordSocketClient discord)
-		{
-			_client = discord;
-			_client.Log += OnLogAsync;
-		}
+        public LoggingService(DiscordSocketClient discord)
+        {
+            _client = discord;
+            _client.Log += Log;
+        }
 
-		private Task OnLogAsync(LogMessage arg)
-		{
-			Console.WriteLine(arg);
-			return Task.CompletedTask;
-		}
-	}
+        private Task Log(LogMessage arg)
+        {
+            Console.WriteLine(arg);
+            return Task.CompletedTask;
+        }
+    }
 }
