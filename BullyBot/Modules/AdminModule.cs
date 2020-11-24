@@ -6,14 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BullyBot.Interactive;
 using ConfigurableServices;
 
 namespace BullyBot.Modules
 {
     [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
     [Name("admin")]
-    public class AdminModule : InteractiveModuleBase<SocketCommandContext>
+    public class AdminModule : ModuleBase<SocketCommandContext>
     {
         //Disclaimer:  14 days to delete a message is not arbitrary
         //It is a restriction encacted by discord
@@ -21,7 +20,6 @@ namespace BullyBot.Modules
         private readonly IConfigService config;
 
         public AdminModule(DiscordSocketClient discord, IConfigService config)
-            : base(discord)
         {
             this.config = config;
         }
