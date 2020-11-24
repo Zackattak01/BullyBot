@@ -141,23 +141,6 @@ namespace BullyBot.Modules
             }, null);
         }
 
-        [Command("permit")]
-        public async Task PermitAsync(SocketGuildUser user, int duration = -1)
-        {
-            IRole role = user.Guild.GetRole(727982322762383521);
-            await user.AddRoleAsync(role);
-
-
-
-            if (duration < 0)
-                return;
-
-            await ReplyAsync($"User permitted for: {duration} minutes");
-            await Task.Delay(duration * 60000);
-
-            await user.RemoveRoleAsync(role);
-        }
-
         [Command("config reload")]
         public async Task ConfigReload()
         {

@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using ConfigurableServices;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,13 +11,17 @@ using System.Threading.Tasks;
 
 namespace BullyBot
 {
-    public class StartupService
+    public class StartupService : ConfigurableService
     {
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
 
-        public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands)
+        [ConfigureFromKey("BetaBotId")]
+        private ulong BetaBotId;
+
+        public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfigService config)
+            : base(config)
         {
             _provider = provider;
             _client = discord;
@@ -36,7 +41,7 @@ namespace BullyBot
 
                 //Checks if the bot is the beta bot or not
                 //If the bot is beta it will not connect to twitch
-                if (_client.CurrentUser.Id == 568212159293685760)
+                if (_client.CurrentUser.Id == BetaBotId)
                 {
                     _provider.GetRequiredService<TwitchAPIService>();
                 }
