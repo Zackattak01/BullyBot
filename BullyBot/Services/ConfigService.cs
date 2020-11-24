@@ -18,22 +18,6 @@ namespace BullyBot
         public event Action ConfigUpdated;
 
 
-        //State
-        private bool _teamSpeakServiceState;
-
-
-
-        public bool TeamSpeakServiceState
-        {
-            get { return _teamSpeakServiceState; }
-            set
-            {
-                _teamSpeakServiceState = value;
-                File.WriteAllText(ConfigPath + "/tsServiceState.txt", _teamSpeakServiceState.ToString());
-            }
-        }
-
-
         public ConfigService()
         {
             ConfigPath = Environment.CurrentDirectory + "/config";
@@ -48,6 +32,7 @@ namespace BullyBot
         public void Reload()
         {
             configPaths.Reload();
+
             config.Clear();
             config.Add("HalfDaySchedule", File.ReadAllText(configPaths.GetValue("HalfDaySchedulePath")));
             config.Add("FullDaySchedule", File.ReadAllText(configPaths.GetValue("FullDaySchedulePath")));
@@ -65,17 +50,11 @@ namespace BullyBot
 
             config.Add("TeamspeakSoundClips", SoundClipPaths);
 
-            _teamSpeakServiceState = bool.Parse(File.ReadAllText(configPaths.GetValue("tsServiceStatePath")));
-
             if (ConfigUpdated != null)
                 ConfigUpdated();
         }
 
-        public string GetValue(string key)
-        {
-            throw new NotImplementedException();
-            return config[key] as string;
-        }
+
 
         public T GetValue<T>(string key)
             where T : class
