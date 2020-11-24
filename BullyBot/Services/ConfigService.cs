@@ -20,7 +20,6 @@ namespace BullyBot
 
         public ConfigService()
         {
-            System.Console.WriteLine("Created");
             ConfigPath = Environment.CurrentDirectory + "/config";
 
             configPaths = new Config(ConfigPath + "/config.conf");
