@@ -24,7 +24,6 @@ namespace BullyBot
             provider.GetRequiredService<CommandHandler>();
             provider.GetRequiredService<ReactionService>();
             provider.GetRequiredService<LoggingService>();
-            provider.GetRequiredService<RoomService>();
             provider.GetRequiredService<TeamspeakService>();
             provider.GetRequiredService<IConfigService>();
             provider.GetRequiredService<MusicService>();
@@ -50,7 +49,6 @@ namespace BullyBot
             .AddSingleton<StartupService>()        // Add startupservice to the collection
             .AddSingleton<ReactionService>()
             .AddSingleton<LoggingService>()
-            .AddSingleton<RoomService>()
             .AddSingleton<TeamspeakService>()
             .AddSingleton<IConfigService, ConfigService>()
             .AddSingleton<TwitchAPIService>()

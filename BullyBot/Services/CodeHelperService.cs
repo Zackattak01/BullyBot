@@ -16,18 +16,6 @@ namespace BullyBot
     public class CodeHelperService : ConfigurableService
     {
 
-
-        //const string begginningBoilerplate =
-        //	"using System;" +
-        //	"using System.Threading.Tasks;" +
-        //	"using Discord.Commands;" +
-        //	"using Discord;" +
-        //	"namespace BullyBot {" +
-        //	"public static class Execute{" +
-        //	"public static async Task Run(SocketCommandContext Context){";
-
-        //private readonly static string begginningBoilerplate = File.ReadAllText("begginningBoilerplate.cs");
-
         [ConfigureFromKey("BegginningBoilerplate")]
         public string BegginningBoilerplate { get; private set; }
 

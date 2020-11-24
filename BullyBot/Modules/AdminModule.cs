@@ -141,27 +141,6 @@ namespace BullyBot.Modules
             }, null);
         }
 
-        [Command("welcommsg")]
-        [Summary("A command to create a welcome embed or other embed testing.")]
-        public async Task DefaultAsync()
-        {
-            /*SocketGuildUser doug = Context.Guild.GetUser(162668166240141313);
-			SocketGuildUser zack = Context.Guild.GetUser(332675511161585666);
-			IUserMessage userMessage = await ReplyAsync("", false, new EmbedBuilder()
-			{
-				Color = new Color?(Color.Purple),
-				Description = ("Welcome to Home Appliances!\nYou are now a part of my home.\n\n~General Chat Rules~\n1.No spamming or flooding the chat with messages.\n2.No racist or degrading content.\n3.No excessively cursing.\n4.No advertising other sites/ discord servers.\n5.No referral links.\n6.Inviting unofficial bots is NOT ALLOWED without administrative approval, any bots that are found will be INSTANTLY BANNED without warning.\n7.Do not use the @everyone ping without permission.\n8.Do not perform or promote the intentional use of glitches, hacks, bugs, and other exploits that will cause an incident within the community and other players.\n9.Do not cause a nuisance in the community, repeated complaints from several members will lead to administrative action.\n10.Do not argue with staff.Decisions are final.\n\n~Voice Chat - Specific Rules~\n1.No voice chat surfing or switching channels repeatedly.\n2.No annoying, loud or high pitch noises.\n3.Reduce the amount of background noise, if possible.Resort to push to talk in your settings to reduce the issue.\n4.You will be removed if sound quality is poor to other members.\n\n~Bot Specific Rules~\n1.Do not spam commands.\n2.Do not use the bot to play music except in the music channel.\n3.Do not play songs over 30 minutes long.\n4.Do not use macros, hacks, etc with the bot.\n5.Do not add any commands.\n\n~Apply Roles Below~\nReact to this post with the according game to recive that rank.\nIf the bot does not give you rank please contact either " + zack.Mention + " or " + doug.Mention)
-			}.Build(), null);*/
-
-            EmbedBuilder eb = new EmbedBuilder();
-
-            eb.AddField("1", "1", true).AddField("1", "1\n", true).WithDescription("t").AddField("1", "1", true).AddField("1", "1", true);
-
-
-            await ReplyAsync(embed: eb.Build());
-
-        }
-
         [Command("permit")]
         public async Task PermitAsync(SocketGuildUser user, int duration = -1)
         {

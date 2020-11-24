@@ -15,9 +15,6 @@ namespace BullyBot
     {
         YoutubeClient youtube;
 
-        public const string ffmpegSaveAndConvert = "-v verbose -report -i test -ac 2 -f s16le -ar 48000 pipe:1";
-        public const string ffmpegPlay = "-v verbose -report -i test2 -ac 2 -f s16le -ar 48000 pipe:1";
-
         public MusicService()
         {
             youtube = new YoutubeClient();
@@ -66,62 +63,8 @@ namespace BullyBot
             using (var input = ffmpeg.StandardInput.BaseStream)
             using (var discord = client.CreatePCMStream(AudioApplication.Mixed))
             {
-                System.Console.WriteLine(video.Title);
-                /*
-                _ = Task.Run(async () =>
-                {
-                    Stopwatch stopwatch = new Stopwatch();
-                    stopwatch.Start();
-
-                    Stream videoStream;
-                    long currentPos = -1;
-
-                    var a = await GetManifestAsync(video);
-                    IStreamInfo info = a.GetMuxed().WithHighestVideoQuality();
-                    await youtube.Videos.Streams.DownloadAsync(info, "test");
-
-                    while (stopwatch.Elapsed < video.Duration)
-                    {
-                        System.Console.WriteLine("Looped");
-                        videoStream = await GetAudioStreamAsync(video);
-                        try
-                        {
-                            if (currentPos != -1)
-                                videoStream.Seek(currentPos, SeekOrigin.Begin);
-
-                            //await videoStream.CopyToAsync(input);
-                        }
-                        catch (Exception e)
-                        {
-                            // System.Console.WriteLine("ERROR " + e.Message);
-                            // System.Console.WriteLine("INPUT: " + youtubeVideo.Length);
-                            // System.Console.WriteLine("POSITION: " + youtubeVideo.Position);
-
-                            // var youtubeVideo2 = await youtube.Videos.Streams.GetAsync(streamInfo);
-                            // await youtubeVideo2.CopyToAsync(input);
-                            System.Console.WriteLine(e.Message);
-                        }
-                        finally
-                        {
-                            currentPos = videoStream.Position;
-                            //await videoStream.FlushAsync();
-                            //await videoStream.DisposeAsync();
-                        }
-
-
-                    }
-
-
-                    System.Console.WriteLine(stopwatch.Elapsed);
-                    System.Console.WriteLine("function exits");
-                });*/
-
-
-
-                Console.WriteLine("done");
                 try { await output.CopyToAsync(discord); }
                 finally { await discord.FlushAsync(); }
-                Console.WriteLine("done done");
             }
         }
 
