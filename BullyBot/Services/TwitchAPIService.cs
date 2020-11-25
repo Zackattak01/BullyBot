@@ -96,11 +96,9 @@ namespace BullyBot
 
         private async Task<TwitchAPIData> RequestTwitchDataAsync(TwitchTokenData tokenData)
         {
-            //configures headers
-            this.httpClient.BaseAddress = new Uri("https://api.twitch.tv/helix/streams");
             this.httpClient.DefaultRequestHeaders.Add("Client-ID", clientId);
             this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + tokenData.access_token);
-            string url = "?user_login=bottoilet";
+            string url = "https://api.twitch.tv/helix/streams?user_login=bottoilet";
 
 
             //makes request and ensures success

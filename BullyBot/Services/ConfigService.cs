@@ -42,8 +42,8 @@ namespace BullyBot
             config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
             //add ids
-            ulong betaId = ulong.Parse(configPaths.GetValue("MainBotId"));
-            config.Add("MainBotId", betaId);
+            ulong mainBotId = ulong.Parse(configPaths.GetValue("MainBotId"));
+            config.Add("MainBotId", mainBotId);
 
             ulong ownerId = ulong.Parse(configPaths.GetValue("OwnerId"));
             config.Add("OwnerId", ownerId);
