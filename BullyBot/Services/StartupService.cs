@@ -18,7 +18,7 @@ namespace BullyBot
         private readonly CommandService _commands;
 
         [ConfigureFromKey("MainBotId")]
-        private ulong MainBotId;
+        private ulong MainBotId { get; set; }
 
         public StartupService(IServiceProvider provider, DiscordSocketClient discord, CommandService commands, IConfigService config)
             : base(config)

@@ -46,6 +46,9 @@ namespace BullyBot
             var discordRestLocation = typeof(Discord.Rest.RestUserMessage).GetTypeInfo().Assembly.Location;
             var discordSocketLocation = typeof(Discord.WebSocket.SocketUserMessage).GetTypeInfo().Assembly.Location;
             var discordCommandLocation = typeof(Discord.Commands.SocketCommandContext).GetTypeInfo().Assembly.Location;
+            var linqLocation = typeof(System.Linq.Enumerable).GetTypeInfo().Assembly.Location;
+
+
 
 
 
@@ -56,12 +59,17 @@ namespace BullyBot
             var discordRestReference = MetadataReference.CreateFromFile(discordRestLocation);
             var discordSocketReference = MetadataReference.CreateFromFile(discordSocketLocation);
             var discordCommandReference = MetadataReference.CreateFromFile(discordCommandLocation);
+            var linqReference = MetadataReference.CreateFromFile(linqLocation);
 
             var compilation = CSharpCompilation.Create(fileName)
                 .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddReferences(systemReference, netStandardRef, systemRuntimeRef, discordCoreReference, discordRestReference, discordSocketReference, discordCommandReference)
+                .AddReferences(systemReference, netStandardRef, systemRuntimeRef, discordCoreReference, discordRestReference, discordSocketReference, discordCommandReference, linqReference)
                 .AddSyntaxTrees(tree);
 
+            foreach (var reference in compilation.ReferencedAssemblyNames)
+            {
+                System.Console.WriteLine(reference.Name);
+            }
 
 
             //string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
