@@ -35,23 +35,26 @@ namespace BullyBot
             configPaths.Reload();
 
             config.Clear();
-            config.Add("HalfDaySchedule", File.ReadAllText(configPaths.GetValue("HalfDaySchedulePath")));
-            config.Add("FullDaySchedule", File.ReadAllText(configPaths.GetValue("FullDaySchedulePath")));
-            config.Add("BegginningBoilerplate", File.ReadAllText(configPaths.GetValue("BegginningBoilerplatePath")));
-            config.Add("EndingBoilerplate", File.ReadAllText(configPaths.GetValue("EndingBoilerplatePath")));
-            config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
-            //add ids
-            ulong mainBotId = ulong.Parse(configPaths.GetValue("MainBotId"));
-            config.Add("MainBotId", mainBotId);
+            KeyValueConfigGroup pathGroup = configPaths.GetGroup("Paths");
 
-            ulong ownerId = ulong.Parse(configPaths.GetValue("OwnerId"));
-            config.Add("OwnerId", ownerId);
+            foreach (var keyValue in pathGroup)
+            {
+                string text = File.ReadAllText(keyValue.Value);
 
-            ulong channelId = ulong.Parse(configPaths.GetValue("StreamingChannelId"));
-            config.Add("StreamingChannelId", channelId);
+                string key = keyValue.Key.Replace("Path", "");
+                config.Add(key, text);
+            }
 
-            string soundPath = ConfigPath + "/sounds/";
+            KeyValueConfigGroup idGroup = configPaths.GetGroup("Ids");
+
+            foreach (var keyValue in idGroup)
+            {
+                ulong id = ulong.Parse(keyValue.Value);
+                config.Add(keyValue.Key, id);
+            }
+
+            //Special cases
             Dictionary<SoundClip, string> SoundClipPaths = new Dictionary<SoundClip, string>();
             SoundClipPaths.Add(SoundClip.Connected, configPaths.GetValue("ConnectedSoundPath"));
             SoundClipPaths.Add(SoundClip.Kicked, configPaths.GetValue("KickedSoundPath"));
@@ -60,6 +63,8 @@ namespace BullyBot
             SoundClipPaths.Add(SoundClip.Unmuted, configPaths.GetValue("UnmutedSoundPath"));
 
             config.Add("TeamspeakSoundClips", SoundClipPaths);
+
+            config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
             if (ConfigUpdated != null)
                 ConfigUpdated();
