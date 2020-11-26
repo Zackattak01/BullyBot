@@ -4,6 +4,6 @@
 # Dependencies
 Quick Links for personal convenience
 
-Zackattak01/KeyValueConfig
-Zackattak01/ConfigurableServices
-Zackattak01/Significant-Figure-Calculator
+[KeyValueConfig](https://github.com/Zackattak01/KeyValueConfig)
+[ConfigurableServices](https://github.com/Zackattak01/ConfigurableServices)
+[Significant-Figure-Calculator](https://github.com/Zackattak01/Significant-Figure-Calculator)
