@@ -31,6 +31,7 @@ namespace BullyBot
             provider.GetRequiredService<CodeHelperService>();
             provider.GetRequiredService<GoogleSearchService>();
             provider.GetRequiredService<HttpClient>();
+            provider.GetRequiredService<SchedulerService>();
             await provider.GetRequiredService<StartupService>().MainAsync();
             await Task.Delay(-1);
         }
@@ -58,7 +59,8 @@ namespace BullyBot
             .AddSingleton<MusicService>()
             .AddSingleton<CodeHelperService>()
             .AddSingleton<GoogleSearchService>()
-            .AddSingleton<HttpClient>();
+            .AddSingleton<HttpClient>()
+            .AddSingleton<SchedulerService>();
 
             // Add loggingservice to the collection													
             //.AddSingleton<Random>()                 // Add random to the collection													
