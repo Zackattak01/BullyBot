@@ -8,7 +8,6 @@ namespace BullyBot
 {
     public class SchedulerService
     {
-
         private List<Timer> timers;
 
         public SchedulerService()
@@ -18,25 +17,46 @@ namespace BullyBot
 
         public bool ScheduleTask(DateTime timeToGo, ElapsedEventHandler function)
         {
-            DateTime currentTime = DateTime.Now;
+            return InitTimer(timeToGo, function, false);
+        }
 
-            TimeSpan timeSpan = timeToGo - currentTime;
+        public bool ScheduleRecurringTask(DateTime timeToGo, ElapsedEventHandler function)
+        {
+            return InitTimer(timeToGo, function, true);
+        }
 
-            //time already elapsed
-            if (timeSpan < TimeSpan.Zero)
-                return false; //indicates task scheduling was a failure
+        private bool InitTimer(DateTime timeToGo, ElapsedEventHandler function, bool repeat)
+        {
+            double? milliseconds = GetMilliseconds(timeToGo);
+
+            if (milliseconds == null)
+                return false;
+
 
 
             Timer timer = new Timer();
-            timer.AutoReset = false;
+            timer.AutoReset = repeat;
             timer.Elapsed += function;
             timer.Elapsed += DisposeTimer;
-            timer.Interval = timeSpan.TotalMilliseconds;
+            timer.Interval = (double)milliseconds;
             timer.Start();
 
             timers.Add(timer);
 
             return true;
+        }
+
+        private double? GetMilliseconds(DateTime time)
+        {
+            DateTime currentTime = DateTime.Now;
+
+            TimeSpan timeSpan = time - currentTime;
+
+            //time already elapsed
+            if (timeSpan < TimeSpan.Zero)
+                return null; //indicates task scheduling was a failure
+
+            return timeSpan.TotalMilliseconds;
         }
 
         private void DisposeTimer(object source, ElapsedEventArgs e)
