@@ -5,6 +5,7 @@ using System.Text;
 using KeyValueConfig;
 using ConfigurableServices;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace BullyBot
 {
@@ -65,6 +66,15 @@ namespace BullyBot
             config.Add("TeamspeakSoundClips", SoundClipPaths);
 
             config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
+
+            var s = File.ReadAllText(configPaths.GetValue("HalfDaySchedulePath"));
+            System.Console.WriteLine(s);
+            System.Console.WriteLine(configPaths.GetValue("HalfDaySchedulePath"));
+            var halfDay = JsonConvert.DeserializeObject<SchoolSchedule>(s);
+            config.Add("HalfDaySchedule", halfDay);
+
+            var fullDay = JsonConvert.DeserializeObject<SchoolSchedule>(File.ReadAllText(configPaths.GetValue("FullDaySchedulePath")));
+            config.Add("FullDaySchedule", fullDay);
 
             if (ConfigUpdated != null)
                 ConfigUpdated();

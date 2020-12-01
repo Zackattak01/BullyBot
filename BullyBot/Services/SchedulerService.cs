@@ -33,11 +33,15 @@ namespace BullyBot
                 return false;
 
 
-
             Timer timer = new Timer();
             timer.AutoReset = repeat;
             timer.Elapsed += function;
-            timer.Elapsed += DisposeTimer;
+
+            if (repeat)
+                timer.Elapsed += DisposeTimer;
+            else
+                timer.Elapsed += CorrectInterval;
+
             timer.Interval = (double)milliseconds;
             timer.Start();
 
@@ -63,6 +67,19 @@ namespace BullyBot
         {
             timers.Remove(source as Timer);
             (source as IDisposable)?.Dispose();
+        }
+
+        private void CorrectInterval(object source, ElapsedEventArgs e)
+        {
+            Timer timer = (Timer)source;
+
+            //the following assumes that the task is to be run at the same time every day
+
+            DateTime tommorow = DateTime.Now.AddDays(1);
+
+            TimeSpan timeToGo = tommorow - DateTime.Now;
+
+            timer.Interval = timeToGo.TotalMilliseconds;
         }
     }
 }
