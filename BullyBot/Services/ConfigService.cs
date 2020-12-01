@@ -68,8 +68,6 @@ namespace BullyBot
             config.Add("CensoredWords", File.ReadAllLines(configPaths.GetValue("CensoredWordsPath")));
 
             var s = File.ReadAllText(configPaths.GetValue("HalfDaySchedulePath"));
-            System.Console.WriteLine(s);
-            System.Console.WriteLine(configPaths.GetValue("HalfDaySchedulePath"));
             var halfDay = JsonConvert.DeserializeObject<SchoolSchedule>(s);
             config.Add("HalfDaySchedule", halfDay);
 
