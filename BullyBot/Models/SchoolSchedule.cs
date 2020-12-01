@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace BullyBot
 {
-    //TODO: Currently when time "overflows" eg: 12:34 -> 1:21 it goes backwards.  Aka -673 mins
     public class SchoolSchedule
     {
         public string ScheduleName { get; set; }
 
-        public IReadOnlyCollection<ClassPeriod> Periods { get; set; }
+        public ImmutableArray<ClassPeriod> Periods { get; set; }
 
         public struct ClassPeriod
         {
@@ -19,16 +19,25 @@ namespace BullyBot
 
             public string EndTime { get; set; }
 
+            public DateTime GetStartTime()
+                => DateTime.Parse(StartTime);
+
+            public DateTime GetEndTime()
+                => DateTime.Parse(EndTime);
+
             public override string ToString()
             {
                 string returnStr = "";
 
-                TimeSpan timeSpan = DateTime.Parse(EndTime) - DateTime.Parse(StartTime);
+                DateTime startTime = GetStartTime();
+                DateTime endTime = GetEndTime();
+
+                TimeSpan timeSpan = endTime - startTime;
                 double length = timeSpan.TotalMinutes;
 
                 returnStr += PeriodName;
                 returnStr += "\n";
-                returnStr += $"{StartTime} - {EndTime} ({length} min)";
+                returnStr += $"{startTime.ToString("h:mm")} - {endTime.ToString("h:mm")} ({length} min)";
 
                 return returnStr;
             }
