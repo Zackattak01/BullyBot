@@ -6,6 +6,7 @@ using KeyValueConfig;
 using ConfigurableServices;
 using System.Net;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace BullyBot
 {
@@ -73,6 +74,11 @@ namespace BullyBot
 
             var fullDay = JsonConvert.DeserializeObject<SchoolSchedule>(File.ReadAllText(configPaths.GetValue("FullDaySchedulePath")));
             config.Add("FullDaySchedule", fullDay);
+
+            var alarmSoundsPath = configPaths.GetValue("AlarmSoundsPath");
+            DirectoryInfo dirInfo = new DirectoryInfo(alarmSoundsPath);
+            var alarmSoundClips = dirInfo.GetFiles().Select(x => x.FullName);
+            config.Add("AlarmSoundPaths", alarmSoundClips);
 
             if (ConfigUpdated != null)
                 ConfigUpdated();

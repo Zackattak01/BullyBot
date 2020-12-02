@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -8,78 +9,31 @@ namespace BullyBot
 {
     public class SchedulerService
     {
-        private List<Timer> timers;
+        private List<ScheduledTask> tasks;
+
 
         public SchedulerService()
         {
-            timers = new List<Timer>();
+            tasks = new List<ScheduledTask>();
         }
 
-        public bool ScheduleTask(DateTime timeToGo, ElapsedEventHandler function)
+        public void ScheduleTask(DateTime timeToGo, string key, ScheduledTaskExecutedEventHandler task)
         {
-            return InitTimer(timeToGo, function, false);
+            ScheduledTask scheduledTask = new ScheduledTask(timeToGo, key, false);
+            scheduledTask.ScheduledTaskExecuted += task;
+
+            tasks.Add(scheduledTask);
         }
 
-        public bool ScheduleRecurringTask(DateTime timeToGo, ElapsedEventHandler function)
+        public void ScheduleRecurringTask(DateTime timeToGo, string key, ScheduledTaskExecutedEventHandler task)
         {
-            return InitTimer(timeToGo, function, true);
+            ScheduledTask scheduledTask = new ScheduledTask(timeToGo, key, true);
+            scheduledTask.ScheduledTaskExecuted += task;
+
+            tasks.Add(scheduledTask);
         }
 
-        private bool InitTimer(DateTime timeToGo, ElapsedEventHandler function, bool repeat)
-        {
-            double? milliseconds = GetMilliseconds(timeToGo);
-
-            if (milliseconds == null)
-                return false;
-
-
-            Timer timer = new Timer();
-            timer.AutoReset = repeat;
-            timer.Elapsed += function;
-
-            if (repeat)
-                timer.Elapsed += DisposeTimer;
-            else
-                timer.Elapsed += CorrectInterval;
-
-            timer.Interval = (double)milliseconds;
-            timer.Start();
-
-            timers.Add(timer);
-
-            return true;
-        }
-
-        private double? GetMilliseconds(DateTime time)
-        {
-            DateTime currentTime = DateTime.Now;
-
-            TimeSpan timeSpan = time - currentTime;
-
-            //time already elapsed
-            if (timeSpan < TimeSpan.Zero)
-                return null; //indicates task scheduling was a failure
-
-            return timeSpan.TotalMilliseconds;
-        }
-
-        private void DisposeTimer(object source, ElapsedEventArgs e)
-        {
-            timers.Remove(source as Timer);
-            (source as IDisposable)?.Dispose();
-        }
-
-        private void CorrectInterval(object source, ElapsedEventArgs e)
-        {
-            Timer timer = (Timer)source;
-
-            //the following assumes that the task is to be run at the same time every day
-
-            DateTime tommorow = DateTime.Now.AddDays(1);
-
-            TimeSpan timeToGo = tommorow - DateTime.Now;
-
-            timer.Interval = timeToGo.TotalMilliseconds;
-        }
+        public bool TaskIsScheduled(string id)
+            => ScheduledTask.IdInUse(id);
     }
 }
