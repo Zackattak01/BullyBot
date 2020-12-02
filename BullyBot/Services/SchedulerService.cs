@@ -21,6 +21,7 @@ namespace BullyBot
         {
             ScheduledTask scheduledTask = new ScheduledTask(timeToGo, key, false);
             scheduledTask.ScheduledTaskExecuted += task;
+            scheduledTask.ScheduledTaskExecuted += HandleDeadScheduledTask;
 
             tasks.Add(scheduledTask);
         }
@@ -35,5 +36,13 @@ namespace BullyBot
 
         public bool TaskIsScheduled(string id)
             => ScheduledTask.IdInUse(id);
+
+        public void HandleDeadScheduledTask(ScheduledTask task)
+        {
+            if (task.IsRecurring)
+            {
+                tasks.Remove(task);
+            }
+        }
     }
 }

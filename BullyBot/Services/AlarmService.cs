@@ -63,21 +63,21 @@ namespace BullyBot
 
         private async void HandleTaskExecuted(ScheduledTask task)
         {
-            _ = Task.Run(async () =>
-            {
-                System.Console.WriteLine(task.Id);
+            System.Console.WriteLine(task.Id);
 
-                var voiceChannels = client.GetGuild(guildId).VoiceChannels;
+            var voiceChannels = client.GetGuild(guildId).VoiceChannels;
 
-                //gets the channel with the highest user count
-                SocketVoiceChannel voiceChannel = voiceChannels.OrderByDescending(x => x.Users.Count).First();
+            //gets the channel with the highest user count
+            SocketVoiceChannel voiceChannel = voiceChannels.OrderByDescending(x => x.Users.Count).First();
 
 
 
-                IAudioClient audioClient = await voiceChannel.ConnectAsync();
+            IAudioClient audioClient = await voiceChannel.ConnectAsync();
 
-                await PlayAudioClip(audioClient, GetRandomAudioClip());
-            });
+            await PlayAudioClip(audioClient, GetRandomAudioClip());
+
+            await voiceChannel.DisconnectAsync();
+
         }
 
         private string GetRandomAudioClip()
