@@ -40,7 +40,7 @@ namespace BullyBot
             return Process.Start(new ProcessStartInfo
             {
                 FileName = "ffmpeg",
-                Arguments = "-v verbose -report -i test -ac 2 -f s16le -ar 48000 pipe:1",
+                Arguments = "-v verbose -report -probesize 2147483647 -i test -ac 2 -f s16le -ar 48000 pipe:1",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
@@ -63,8 +63,24 @@ namespace BullyBot
             using (var input = ffmpeg.StandardInput.BaseStream)
             using (var discord = client.CreatePCMStream(AudioApplication.Mixed))
             {
-                try { await output.CopyToAsync(discord); }
+
+
+                try
+                {
+                    while (true)
+                    {
+                        await output.CopyToAsync(discord);
+                        System.Console.WriteLine("done copying");
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine(e.ToString());
+                }
                 finally { await discord.FlushAsync(); }
+
+                System.Console.WriteLine("operation finishes");
             }
         }
 

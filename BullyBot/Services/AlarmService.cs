@@ -52,8 +52,11 @@ namespace BullyBot
         private SchoolSchedule GetCurrentSchedule()
         {
             SchoolSchedule currentSchedule;
+            DayOfWeek day = DateTime.Now.DayOfWeek;
 
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday)
+            if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday)
+                return null;
+            else if (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday)
                 currentSchedule = halfDay;
             else
                 currentSchedule = fullDay;
@@ -113,6 +116,12 @@ namespace BullyBot
         //DO NOT schedule a recurring task, simply because Wednesday is a half day. gonna have to manually reschedule the alarms each day at, say 6 am?
         private void RescheduleAlarms(ScheduledTask task)
         {
+            SchoolSchedule currentSchedule = GetCurrentSchedule();
+
+            //treat as a day off from school.  GetCurrentSchedule will return null on weekends (no school)
+            if (currentSchedule == null)
+                return;
+
             foreach (var period in GetCurrentSchedule().Periods)
             {
                 if (scheduler.TaskIsScheduled(period.PeriodName) || period.GetStartTime() - DateTime.Now < TimeSpan.Zero)
