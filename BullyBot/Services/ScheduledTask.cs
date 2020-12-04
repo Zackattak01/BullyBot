@@ -8,7 +8,10 @@ using Timer = System.Timers.Timer;
 
 namespace BullyBot
 {
-    public delegate void ScheduledTaskExecutedEventHandler(ScheduledTask sender);
+    public delegate void ScheduledTaskExecuteEventHandler(ScheduledTask sender);
+
+    //event is fired when the timer dies aka is no longer in use.  Essentially an event to prepare it for GC
+    public delegate void ReadyForDisposalEventHandler(ScheduledTask sender);
 
     public class ScheduledTask
     {
@@ -19,7 +22,9 @@ namespace BullyBot
         public string Id { get; }
 
         public bool IsRecurring { get; }
-        public event ScheduledTaskExecutedEventHandler ScheduledTaskExecuted;
+        public event ScheduledTaskExecuteEventHandler Execute;
+
+        public event ReadyForDisposalEventHandler ReadyForDisposal;
 
 
 
@@ -95,13 +100,14 @@ namespace BullyBot
 
         private void RaisePublicEvent(object source, ElapsedEventArgs e)
         {
-            ScheduledTaskExecuted(this);
+            Execute(this);
         }
 
         private void DisposeTimer(object source, ElapsedEventArgs e)
         {
             (source as IDisposable)?.Dispose();
             ids.Remove(Id);
+            ReadyForDisposal(this);
         }
 
         private void CorrectInterval(object source, ElapsedEventArgs e)

@@ -17,19 +17,19 @@ namespace BullyBot
             tasks = new List<ScheduledTask>();
         }
 
-        public void ScheduleTask(DateTime timeToGo, string key, ScheduledTaskExecutedEventHandler task)
+        public void ScheduleTask(DateTime timeToGo, string key, ScheduledTaskExecuteEventHandler task)
         {
             ScheduledTask scheduledTask = new ScheduledTask(timeToGo, key, false);
-            scheduledTask.ScheduledTaskExecuted += task;
-            scheduledTask.ScheduledTaskExecuted += HandleDeadScheduledTask;
+            scheduledTask.Execute += task;
+            scheduledTask.ReadyForDisposal += HandleDeadScheduledTask;
 
             tasks.Add(scheduledTask);
         }
 
-        public void ScheduleRecurringTask(DateTime timeToGo, string key, ScheduledTaskExecutedEventHandler task)
+        public void ScheduleRecurringTask(DateTime timeToGo, string key, ScheduledTaskExecuteEventHandler task)
         {
             ScheduledTask scheduledTask = new ScheduledTask(timeToGo, key, true);
-            scheduledTask.ScheduledTaskExecuted += task;
+            scheduledTask.Execute += task;
 
             tasks.Add(scheduledTask);
         }
@@ -39,10 +39,7 @@ namespace BullyBot
 
         public void HandleDeadScheduledTask(ScheduledTask task)
         {
-            if (task.IsRecurring)
-            {
-                tasks.Remove(task);
-            }
+            tasks.Remove(task);
         }
     }
 }
