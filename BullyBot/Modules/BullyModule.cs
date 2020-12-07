@@ -43,7 +43,7 @@ namespace BullyBot.Modules
 
         [Command("add")]
         [Summary("Can be used to add an is or because statement to the roast command")]
-        public async Task AddAsync(string mode, params string[] statement)
+        public async Task AddAsync(string mode, [Remainder] string statement)
         {
             //updates rexjoke chache
             RexJoke.DeserializeJSON();
@@ -51,27 +51,21 @@ namespace BullyBot.Modules
             //ensures mode is an a correct format
             mode.ToLower();
 
-            //creates a string that will hold the contents of "statement" that are concated together
-            string s = "";
-            foreach (var item in statement)
-            {
-                s += item + " ";
-            }
-
-            s.Trim();
+            //trim statement
+            statement.Trim();
 
             //logic tree to determine mode and act accordingly
             if (mode == "is")
             {
                 //add statement, update the JSON file on disk, and sends finished message
-                RexJoke.AddIsSatement(s);
+                RexJoke.AddIsSatement(statement);
                 RexJoke.SerializseJSON();
                 await Context.Channel.SendMessageAsync("Done");
             }
             else if (mode == "because")
             {
                 //add statement, update the JSON file on disk, and sends finished message
-                RexJoke.AddBecauseSatement(s);
+                RexJoke.AddBecauseSatement(statement);
                 RexJoke.SerializseJSON();
                 await Context.Channel.SendMessageAsync("Done");
             }

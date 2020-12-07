@@ -34,6 +34,15 @@ namespace BullyBot.Modules
             Environment.Exit(0);
         }
 
+        [Command("restart")]
+        [Alias("update")]
+        public async Task RestartAsync()
+        {
+            await ReplyAsync("Restarting");
+            await Context.Client.LogoutAsync();
+            Environment.Exit(1);
+        }
+
         [Command("clean")]
         [Summary("Will attempt to clean all messages the include the bot that are younger than 14 days old.  Add all to clean all messages.")]
         public async Task CleanAsync(string all = null)
