@@ -3,6 +3,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -31,6 +32,9 @@ namespace BullyBot
             provider.GetRequiredService<CodeHelperService>();
             provider.GetRequiredService<GoogleSearchService>();
             provider.GetRequiredService<HttpClient>();
+            provider.GetRequiredService<SchedulerService>();
+            provider.GetRequiredService<AlarmService>();
+            provider.GetRequiredService<Random>();
             await provider.GetRequiredService<StartupService>().MainAsync();
             await Task.Delay(-1);
         }
@@ -58,7 +62,10 @@ namespace BullyBot
             .AddSingleton<MusicService>()
             .AddSingleton<CodeHelperService>()
             .AddSingleton<GoogleSearchService>()
-            .AddSingleton<HttpClient>();
+            .AddSingleton<HttpClient>()
+            .AddSingleton<SchedulerService>()
+            .AddSingleton<AlarmService>()
+            .AddSingleton<Random>();
 
             // Add loggingservice to the collection													
             //.AddSingleton<Random>()                 // Add random to the collection													

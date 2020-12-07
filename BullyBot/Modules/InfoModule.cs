@@ -35,8 +35,8 @@ namespace BullyBot.Modules
             var censoredWords = config.GetValue<IEnumerable<string>>("CensoredWords");
             censor = new Censor(censoredWords);
 
-            halfDaySchedule = config.GetValue<string>("HalfDaySchedule");
-            fullDaySchedule = config.GetValue<string>("FullDaySchedule");
+            halfDaySchedule = config.GetValue<SchoolSchedule>("HalfDaySchedule").ToString();
+            fullDaySchedule = config.GetValue<SchoolSchedule>("FullDaySchedule").ToString();
 
 
             this.searchService = searchService;
