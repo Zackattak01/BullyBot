@@ -29,7 +29,7 @@ namespace BullyBot.Modules
         [Summary("Kills the bot (currently broken)")]
         public async Task KillAsync()
         {
-            await ReplyAsync("Killing");
+            await ReplyAsync("Killing...");
             await Context.Client.LogoutAsync();
             Environment.Exit(0);
         }
@@ -38,7 +38,7 @@ namespace BullyBot.Modules
         [Alias("update")]
         public async Task RestartAsync()
         {
-            await ReplyAsync("Restarting");
+            await ReplyAsync("Restarting...");
             await Context.Client.LogoutAsync();
             Environment.Exit(1);
         }
