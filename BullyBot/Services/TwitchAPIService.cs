@@ -25,7 +25,7 @@ namespace BullyBot
         private HttpClient httpClient;
 
         [ConfigureFromKey("StreamingChannelId")]
-        private ulong streamingChannelId;
+        private ulong streamingChannelId { get; set; }
 
         public TwitchAPIService(DiscordSocketClient _client, HttpClient httpClient, IConfigService config)
             : base(config)
@@ -52,7 +52,7 @@ namespace BullyBot
 
 
             //checks if BotToilet is streaming and that the message explaining so has not been sent already
-            if (data.data.Length != 0 && !alreadySentMessage)
+            if (data.Data.Length != 0 && !alreadySentMessage)
             {
                 //standard embed building
                 EmbedAuthorBuilder embedAuthorBuilder = new EmbedAuthorBuilder()
@@ -69,8 +69,8 @@ namespace BullyBot
                     ImageUrl = "https://static-cdn.jtvnw.net/previews-ttv/live_user_bottoilet-1920x1080.jpg?r=" + new Random().Next().ToString(), //cache buster
                     Description = "https://www.twitch.tv/bottoilet"
                 };
-                embedBuilder.AddField("Title", data.data[0].title, true);
-                embedBuilder.AddField("Started (Eastern Time):", data.data[0].started_at.ToLocalTime(), true);
+                embedBuilder.AddField("Title", data.Data[0].Title, true);
+                embedBuilder.AddField("Started (Eastern Time):", data.Data[0].StartedAt.ToLocalTime(), true);
 
                 //gets the streaming channel and send messages
                 channel = client.GetChannel(streamingChannelId) as ISocketMessageChannel;
@@ -80,7 +80,7 @@ namespace BullyBot
 
             }
             //checks if BotToilet went offline thus resetting the alreadySentMessgae flag
-            else if (data.data.Length == 0 && alreadySentMessage)
+            else if (data.Data.Length == 0 && alreadySentMessage)
                 alreadySentMessage = false;
 
             await RevokeTokenAsync(tokenData);
@@ -97,7 +97,7 @@ namespace BullyBot
         private async Task<TwitchAPIData> RequestTwitchDataAsync(TwitchTokenData tokenData)
         {
             this.httpClient.DefaultRequestHeaders.Add("Client-ID", clientId);
-            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + tokenData.access_token);
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + tokenData.AccessToken);
             string url = "https://api.twitch.tv/helix/streams?user_login=bottoilet";
 
 
@@ -118,7 +118,7 @@ namespace BullyBot
         private async Task RevokeTokenAsync(TwitchTokenData tokenData)
         {
             //revokes oautho token
-            await httpClient.PostAsync($"https://id.twitch.tv/oauth2/revoke?client_id={clientId}&token=" + tokenData.access_token, new StringContent(""));
+            await httpClient.PostAsync($"https://id.twitch.tv/oauth2/revoke?client_id={clientId}&token=" + tokenData.AccessToken, new StringContent(""));
         }
     }
 

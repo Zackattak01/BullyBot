@@ -1,30 +1,56 @@
 using System;
+using Newtonsoft.Json;
 
 namespace BullyBot
 {
-    class TwitchAPIData
+    public class TwitchAPIData
     {
-        public Data[] data;
-        public Pagination pagination;
+        [JsonProperty("data")]
+        public TwitchData[] Data { get; set; }
 
-        internal struct Data
+        [JsonProperty("pagination")]
+        public TwitchPagination Pagination { get; set; }
+
+        public class TwitchData
         {
-            public string id;
-            public string user_id;
-            public string user_name;
-            public string game_id;
-            public string type;
-            public string title;
-            public int viewer_count;
-            public DateTime started_at;
-            public string language;
-            public string thumbnail_url;
-            public string[] tag_ids;
+            [JsonProperty("id")]
+            public string Id { get; set; }
+
+            [JsonProperty("user_id")]
+            public string UserId { get; set; }
+
+            [JsonProperty("user_name")]
+            public string Username { get; set; }
+
+            [JsonProperty("game_id")]
+            public string GameId { get; set; }
+
+            [JsonProperty("type")]
+            public string Type { get; set; }
+
+            [JsonProperty("title")]
+            public string Title { get; set; }
+
+            [JsonProperty("viewer_count")]
+            public int ViewerCount { get; set; }
+
+            [JsonProperty("started_at")]
+            public DateTime StartedAt { get; set; }
+
+            [JsonProperty("language")]
+            public string Language { get; set; }
+
+            [JsonProperty("thumbnail_url")]
+            public string ThumbnailUrl { get; set; }
+
+            [JsonProperty("tag_ids")]
+            public string[] TagIds { get; set; }
         }
 
-        internal struct Pagination
+        public class TwitchPagination
         {
-            public string cursor;
+            [JsonProperty("cursor")]
+            public string Cursor { get; set; }
         }
     }
 }

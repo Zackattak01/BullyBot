@@ -175,14 +175,14 @@ namespace BullyBot.Modules
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                 {
                     Author = EAB,
-                    Title = searchResults.items[0].title,
-                    Url = searchResults.items[0].link,
-                    ThumbnailUrl = searchResults.items[0].pagemap.cse_thumbnail[0].src,
+                    Title = searchResults.Items[0].Title,
+                    Url = searchResults.Items[0].Link,
+                    ThumbnailUrl = searchResults.Items[0].PageMap.CseThumbnail[0].Src,
                     Color = new Color?(new Color(66, 133, 244)),
                     Footer = new EmbedFooterBuilder().WithText("Search Requested").WithIconUrl("https://cdn4.iconfinder.com/data/icons/new-google-logo-2015/400/new-google-favicon-512.png")
                 }
-                .AddField("Result 2", "[" + searchResults.items[1].title + "](" + searchResults.items[1].link + ")", false)
-                .AddField("Result 3", "[" + searchResults.items[2].title + "](" + searchResults.items[2].link + ")", false)
+                .AddField("Result 2", "[" + searchResults.Items[1].Title + "](" + searchResults.Items[1].Link + ")", false)
+                .AddField("Result 3", "[" + searchResults.Items[2].Title + "](" + searchResults.Items[2].Link + ")", false)
                 .WithCurrentTimestamp();
                 await ReplyAsync(embed: embedBuilder.Build());
 

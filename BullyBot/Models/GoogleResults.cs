@@ -1,26 +1,35 @@
 using System;
+using Newtonsoft.Json;
 
 namespace BullyBot
 {
     public class GoogleResults
     {
-        public Item[] items;
+        [JsonProperty("items")]
+        public Item[] Items { get; set; }
 
-        public struct Item
+        public class Item
         {
-            public string link;
-            public string title;
-            public PageMap pagemap;
+            [JsonProperty("link")]
+            public string Link { get; set; }
+
+            [JsonProperty("title")]
+            public string Title { get; set; }
+
+            [JsonProperty("pagemap")]
+            public PageMap PageMap { get; set; }
         }
 
-        public struct PageMap
+        public class PageMap
         {
-            public CSE_Thumbnail[] cse_thumbnail;
+            [JsonProperty("cse_thumbnail")]
+            public CSE_Thumbnail[] CseThumbnail { get; set; }
         }
 
-        public struct CSE_Thumbnail
+        public class CSE_Thumbnail
         {
-            public string src;
+            [JsonProperty("src")]
+            public string Src { get; set; }
         }
     }
 }

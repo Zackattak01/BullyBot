@@ -21,16 +21,16 @@ namespace BullyBot
         private Random random;
 
         [ConfigureFromKey("FullDaySchedule")]
-        private SchoolSchedule fullDay;
+        private SchoolSchedule fullDay { get; set; }
 
         [ConfigureFromKey("HalfDaySchedule")]
-        private SchoolSchedule halfDay;
+        private SchoolSchedule halfDay { get; set; }
 
         [ConfigureFromKey("AlarmGuildId")]
-        private ulong guildId; //the guild to be used for alerting people
+        private ulong guildId { get; set; }//the guild to be used for alerting people
 
         [ConfigureFromKey("AlarmSoundPaths")]
-        private IEnumerable<string> alarmClipPaths;
+        private IEnumerable<string> alarmClipPaths { get; set; }
 
         public AlarmService(SchedulerService scheduler, DiscordSocketClient client, Random random, IConfigService config)
         : base(config)

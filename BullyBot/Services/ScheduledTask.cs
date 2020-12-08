@@ -17,7 +17,7 @@ namespace BullyBot
     {
         private static List<string> ids = new List<string>();
 
-        private Timer timer;
+        //private Timer timer; not needed for now.  Timer didn't get GCed as expected
 
         public string Id { get; }
 

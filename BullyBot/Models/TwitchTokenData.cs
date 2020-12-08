@@ -1,11 +1,17 @@
 using System;
+using Newtonsoft.Json;
 
 namespace BullyBot
 {
     internal class TwitchTokenData
     {
-        public string access_token;
-        public string expires_in;
-        public string token_type;
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("expires_in")]
+        public string ExpiresIn { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
     }
 }
