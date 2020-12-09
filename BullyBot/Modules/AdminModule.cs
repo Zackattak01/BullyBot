@@ -34,11 +34,11 @@ namespace BullyBot.Modules
             Environment.Exit(0);
         }
 
-        [Command("restart")]
-        [Alias("update")]
+        [Command("update")]
+        [Alias("restart")]
         public async Task RestartAsync()
         {
-            await ReplyAsync("Restarting...");
+            await ReplyAsync("Updating...");
             await Context.Client.LogoutAsync();
             Environment.Exit(1);
         }
