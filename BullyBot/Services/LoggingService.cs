@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
@@ -11,10 +12,16 @@ namespace BullyBot
 
         private readonly DiscordSocketClient _client;
 
-        public LoggingService(DiscordSocketClient discord)
+        private readonly CommandService commandService;
+
+        public LoggingService(DiscordSocketClient discord, CommandService commandService)
         {
             _client = discord;
             _client.Log += Log;
+
+            this.commandService = commandService;
+            this.commandService.CommandExecuted += CommandExecutedAsync;
+
         }
 
         private Task Log(LogMessage arg)
@@ -22,5 +29,14 @@ namespace BullyBot
             Console.WriteLine(arg);
             return Task.CompletedTask;
         }
+
+        public async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
+        {
+            if (!string.IsNullOrEmpty(result?.ErrorReason))
+            {
+                await context.Channel.SendMessageAsync(result.ErrorReason);
+            }
+        }
+
     }
 }
