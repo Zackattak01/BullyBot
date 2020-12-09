@@ -34,9 +34,6 @@ namespace BullyBot
 
         public (UnloadableAssemblyLoadContext, string) CompileAndLoadAssembly(string code)
         {
-            //AppDomain dom = AppDomain.CreateDomain("execute");
-
-
             var tree = SyntaxFactory.ParseSyntaxTree(code);
             string fileName = "exec.dll";
 
@@ -47,9 +44,6 @@ namespace BullyBot
             var discordSocketLocation = typeof(Discord.WebSocket.SocketUserMessage).GetTypeInfo().Assembly.Location;
             var discordCommandLocation = typeof(Discord.Commands.SocketCommandContext).GetTypeInfo().Assembly.Location;
             var linqLocation = typeof(System.Linq.Enumerable).GetTypeInfo().Assembly.Location;
-
-
-
 
 
             var systemReference = MetadataReference.CreateFromFile(systemRefLocation);
@@ -66,13 +60,7 @@ namespace BullyBot
                 .AddReferences(systemReference, netStandardRef, systemRuntimeRef, discordCoreReference, discordRestReference, discordSocketReference, discordCommandReference, linqReference)
                 .AddSyntaxTrees(tree);
 
-            foreach (var reference in compilation.ReferencedAssemblyNames)
-            {
-                System.Console.WriteLine(reference.Name);
-            }
 
-
-            //string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             var stream = new MemoryStream();
             EmitResult compilationResult = compilation.Emit(stream);
 
