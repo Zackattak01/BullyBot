@@ -34,7 +34,8 @@ namespace BullyBot
         {
             if (!string.IsNullOrEmpty(result?.ErrorReason))
             {
-                await context.Channel.SendMessageAsync(result.ErrorReason);
+                if(result.Error != CommandError.UnknownCommand)
+                    await context.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
 
