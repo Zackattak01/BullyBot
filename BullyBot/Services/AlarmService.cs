@@ -18,6 +18,8 @@ namespace BullyBot
 
         private DiscordSocketClient client;
 
+        private FFmpegArguments ffmpegArguments;
+
         private Random random;
 
         [ConfigureFromKey("FullDaySchedule")]
@@ -39,6 +41,7 @@ namespace BullyBot
             this.random = random;
             this.scheduler = scheduler;
 
+            ffmpegArguments = new FFmpegArguments().WithOutputFormat("s16le").WithPipedOutput();
 
             DateTime dateTime = DateTime.Parse("6:00am");
             scheduler.ScheduleRecurringTask(dateTime, "AlarmRescheduler", RescheduleAlarms);
@@ -92,7 +95,8 @@ namespace BullyBot
 
         private async Task PlayAudioClip(IAudioClient audioClient, string path)
         {
-            using (var ffmpeg = CreateStream(path))
+
+            using (var ffmpeg = FFmpegUtils.CreateFFmpeg(ffmpegArguments.WithInputFile(path)))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = audioClient.CreatePCMStream(AudioApplication.Mixed))
             {
@@ -101,16 +105,16 @@ namespace BullyBot
             }
         }
 
-        private Process CreateStream(string path)
-        {
-            return Process.Start(new ProcessStartInfo
-            {
-                FileName = "ffmpeg",
-                Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-            });
-        }
+        // private Process CreateStream(string path)
+        // {
+        //     return Process.Start(new ProcessStartInfo
+        //     {
+        //         FileName = "ffmpeg",
+        //         Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
+        //         UseShellExecute = false,
+        //         RedirectStandardOutput = true,
+        //     });
+        // }
 
 
         //DO NOT schedule a recurring task, simply because Wednesday is a half day. gonna have to manually reschedule the alarms each day at, say 6 am?

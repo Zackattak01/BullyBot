@@ -13,11 +13,14 @@ namespace BullyBot
 {
     public class MusicService
     {
+        FFmpegArguments fFmpegArguments;
+
         YoutubeClient youtube;
 
         public MusicService()
         {
             youtube = new YoutubeClient();
+            fFmpegArguments = new FFmpegArguments().WithInputFile("test").WithPipedOutput().WithOutputFormat("s16le");
         }
 
         //add queue logic here
@@ -35,19 +38,19 @@ namespace BullyBot
 
 
 
-        private Process CreateStream()
-        {
-            return Process.Start(new ProcessStartInfo
-            {
-                FileName = "ffmpeg",
-                Arguments = "-v verbose -report -probesize 2147483647 -i test -ac 2 -f s16le -ar 48000 pipe:1",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                RedirectStandardError = true,
+        // private Process CreateStream()
+        // {
+        //     return Process.Start(new ProcessStartInfo
+        //     {
+        //         FileName = "ffmpeg",
+        //         Arguments = "-v verbose -report -probesize 2147483647 -i test -ac 2 -ar 48000 -f s16le pipe:1",
+        //         UseShellExecute = false,
+        //         RedirectStandardOutput = true,
+        //         RedirectStandardInput = true,
+        //         RedirectStandardError = true,
 
-            });
-        }
+        //     });
+        // }
 
         private async Task SendAsync(IAudioClient client, Video video)
         {
@@ -58,9 +61,9 @@ namespace BullyBot
 
 
             //using (var ytVideo = await youtube.Videos.Streams.GetAsync(streamInfo))
-            using (var ffmpeg = CreateStream())
+            using (var ffmpeg = FFmpegUtils.CreateFFmpeg(fFmpegArguments))
             using (var output = ffmpeg.StandardOutput.BaseStream)
-            using (var input = ffmpeg.StandardInput.BaseStream)
+            //using (var input = ffmpeg.StandardInput.BaseStream)
             using (var discord = client.CreatePCMStream(AudioApplication.Mixed))
             {
 
