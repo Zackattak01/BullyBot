@@ -48,9 +48,9 @@ namespace BullyBot.Modules
         public async Task CleanAsync(string all = null)
         {
             //sends a message acknowledgling the request
-            IMessage cleanMessage = await Context.Channel.SendMessageAsync("Cleaning...");
+            RestUserMessage cleanMessage = await Context.Channel.SendMessageAsync("Cleaning...");
 
-            //gets the last 100 messages. (this is the maximum)
+            //gets the last 100 messages. (this is the maximum) <- not really but whatever
             var messages = await Context.Channel.GetMessagesAsync(100).FlattenAsync();
 
             //creates a list that will contain messages to be cleaned
@@ -66,7 +66,7 @@ namespace BullyBot.Modules
                 //also ensures the message is younger than 14 days
                 //if it passes the checks the message is added to the list
                 if (((message as IUserMessage).HasCharPrefix('!', ref argPos) || (message as IUserMessage).HasMentionPrefix(Context.Client.CurrentUser, ref argPos)
-                    || (long)message.Author.Id == (long)cleanMessage.Author.Id || all != null)
+                    || message.Author.Id == cleanMessage.Author.Id || all != null)
                     && !(message.Timestamp - DateTimeOffset.Now <= new TimeSpan(-14, 0, 0, 0)))
                 {
                     messagesToClean.Add(message);
@@ -79,8 +79,8 @@ namespace BullyBot.Modules
             //does some funky shit because this method wont accept a list
             await channel.DeleteMessagesAsync(messagesToClean.ToAsyncEnumerable().ToEnumerable());
 
-            //deltes orignal acknowledgement messgae
-            await cleanMessage.DeleteAsync();
+            //deletes orignal acknowledgement message (should get deleted by the bulk delete)
+            //await cleanMessage.DeleteAsync();
         }
 
         [Command("nuke")]
