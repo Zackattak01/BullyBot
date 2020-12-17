@@ -48,7 +48,7 @@ namespace BullyBot
 
 
                 //setting status
-                IActivity game = new Game("Serving Your Requests | !help", ActivityType.Playing, ActivityProperties.None, null);
+                IActivity game = new Game("Hey Yall! Z TIER!", ActivityType.Playing, ActivityProperties.None, null);
                 await _client.SetActivityAsync(game);
             };
 

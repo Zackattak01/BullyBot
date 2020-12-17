@@ -2,11 +2,8 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Loader;
-using System.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ConfigurableServices;
@@ -30,6 +27,7 @@ namespace BullyBot
         public string CreateValidCode(string invalidCode)
         {
             return BegginningBoilerplate + invalidCode + EndingBoilerplate;
+            
         }
 
         public (UnloadableAssemblyLoadContext, string) CompileAndLoadAssembly(string code)
