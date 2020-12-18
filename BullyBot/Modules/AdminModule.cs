@@ -65,12 +65,16 @@ namespace BullyBot.Modules
                 //checks if the message starts with the prefix, or mention, if the message's author is the bot or if the "all" flag was set
                 //also ensures the message is younger than 14 days
                 //if it passes the checks the message is added to the list
-                if (((message as IUserMessage).HasCharPrefix('!', ref argPos) || (message as IUserMessage).HasMentionPrefix(Context.Client.CurrentUser, ref argPos)
-                    || message.Author.Id == cleanMessage.Author.Id || all != null)
-                    && !(message.Timestamp - DateTimeOffset.Now <= new TimeSpan(-14, 0, 0, 0)))
+                if (message is IUserMessage userMessage)
                 {
-                    messagesToClean.Add(message);
+                    if ((userMessage.HasCharPrefix('!', ref argPos) || userMessage.HasMentionPrefix(Context.Client.CurrentUser, ref argPos)
+                                        || message.Author.Id == cleanMessage.Author.Id || all != null)
+                                        && !(message.Timestamp - DateTimeOffset.Now <= new TimeSpan(-14, 0, 0, 0)))
+                    {
+                        messagesToClean.Add(message);
+                    }
                 }
+
 
             }
             //casts the channel to get DeleteMessagesAsync

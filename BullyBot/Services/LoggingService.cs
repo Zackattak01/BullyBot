@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace BullyBot
         {
             if (!string.IsNullOrEmpty(result?.ErrorReason))
             {
-                if(result.Error != CommandError.UnknownCommand)
+                if (result.Error != CommandError.UnknownCommand)
                     await context.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
