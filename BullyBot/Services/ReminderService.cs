@@ -27,7 +27,8 @@ namespace BullyBot
 
         public async Task AddReminderAsync(Reminder reminder)
         {
-            var context = serviceProvider.GetRequiredService<BullyBotDbContext>();
+            using var scope = serviceProvider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
 
             await context.Reminders.AddAsync(reminder);
             await context.SaveChangesAsync();
@@ -38,7 +39,8 @@ namespace BullyBot
 
         public async Task RemoveReminderAsync(int id)
         {
-            var context = serviceProvider.GetRequiredService<BullyBotDbContext>();
+            using var scope = serviceProvider.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
 
             var reminder = await context.Reminders.FindAsync(id);
 
@@ -46,11 +48,17 @@ namespace BullyBot
             await context.SaveChangesAsync();
         }
 
-        public Task RescheduleExistingReminders()
+        public async Task GetRemindersForUser(ulong id)
+        {
+
+        }
+
+        private Task RescheduleExistingReminders()
         {
             _ = Task.Run(async () =>
             {
-                var context = serviceProvider.GetRequiredService<BullyBotDbContext>();
+                using var scope = serviceProvider.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
 
                 foreach (var reminder in await context.Reminders.ToListAsync())
                 {
@@ -86,5 +94,7 @@ namespace BullyBot
             await channel.SendMessageAsync($"{user.Mention} Reminder: {reminder.Value}");
             await RemoveReminderAsync(reminder.Id);
         }
+
+
     }
 }
