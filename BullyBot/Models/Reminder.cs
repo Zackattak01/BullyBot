@@ -21,11 +21,26 @@ namespace BullyBot
         }
 
         public string GetTimeString()
-            => Time.ToString("MM/dd/yy h:mm tt");
+        {
+            string returnString;
+            if (Time.Date == DateTime.Now.Date)
+                returnString = Time.ToString("a\\t h:mm tt");
+            else
+                returnString = Time.ToString("on MM/dd/yy a\\t h:mm tt");
+
+            return returnString;
+        }
+
+        public string GetTimeCapitilizeFirstLetter()
+        {
+            string time = GetTimeString();
+            return char.ToUpper(time[0]) + time.Substring(1);
+        }
+
 
         public override string ToString()
         {
-            return $"On {GetTimeString()}: {Value}  (Id: {Id})";
+            return $"{GetTimeCapitilizeFirstLetter()}: {Value}  (Id: {Id})";
         }
 
 
