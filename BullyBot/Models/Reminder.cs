@@ -20,10 +20,14 @@ namespace BullyBot
             Value = value;
         }
 
+        public string GetTimeString()
+            => Time.ToString("MM/dd/yy h:mm tt");
+
         public override string ToString()
         {
-            return $"On {Time.ToString()}: {Value}  (Id: {Id})";
+            return $"On {GetTimeString()}: {Value}  (Id: {Id})";
         }
+
 
     }
 }

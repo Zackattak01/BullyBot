@@ -34,7 +34,7 @@ namespace BullyBot
         {
             await reminderService.AddReminderAsync(input);
 
-            await ReplyAsync($"Ok, I will remind you to \"{input.Value}\" on {input.Time.ToString()}");
+            await ReplyAsync($"Ok, I will remind you to \"{input.Value}\" on {input.GetTimeString()}");
         }
 
         [Command("list")]
