@@ -20,14 +20,15 @@ namespace BullyBot
 
             var result = HumanReadableTimeParser.ParseTime(input);
 
+            if (!result.Success)
+                return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, result.ErrorReason));
+
+
             var splitReason = input.Split(' ').Skip((int)result.LastTokenPosition);
             var reminderValue = string.Join(' ', splitReason);
 
             if (reminderValue.StartsWith("to "))
                 reminderValue = reminderValue.ReplaceFirst("to ", "");
-
-            if (!result.Success)
-                return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, result.ErrorReason));
 
             var reminder = new Reminder((DateTime)result.DateTime, context.User.Id, context.Channel.Id, reminderValue);
 

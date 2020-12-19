@@ -2,7 +2,7 @@ using System;
 using BullyBot;
 using Microsoft.EntityFrameworkCore;
 
-namespace Name
+namespace BullyBot
 {
     public class BullyBotDbContext : DbContext
     {

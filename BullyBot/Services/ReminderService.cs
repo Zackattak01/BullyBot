@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using Name;
 
 namespace BullyBot
 {
@@ -46,11 +46,6 @@ namespace BullyBot
 
             context.Remove(reminder);
             await context.SaveChangesAsync();
-        }
-
-        public async Task GetRemindersForUser(ulong id)
-        {
-
         }
 
         private Task RescheduleExistingReminders()

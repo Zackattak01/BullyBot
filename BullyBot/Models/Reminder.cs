@@ -19,7 +19,11 @@ namespace BullyBot
             ChannelId = channelId;
             Value = value;
         }
-        //=> (time, userId, channelId, value) = (Time, UserId, ChannelId, Value); //<- this is really cool
+
+        public override string ToString()
+        {
+            return $"On {Time.ToString()}: {Value}  (Id: {Id})";
+        }
 
     }
 }
