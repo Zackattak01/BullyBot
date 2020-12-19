@@ -76,7 +76,12 @@ namespace BullyBot
         private async Task ReminderCallbackAsync(Reminder reminder)
         {
             var channel = client.GetChannel(reminder.ChannelId) as SocketTextChannel;
-            var user = await client.Rest.GetUserAsync(reminder.UserId);
+
+            IUser user;
+            user = client.GetUser(reminder.UserId);
+
+            if (user is null)
+                user = await client.Rest.GetUserAsync(reminder.UserId);
 
             await channel.SendMessageAsync($"{user.Mention} Reminder: {reminder.Value}");
             await RemoveReminderAsync(reminder.Id);
