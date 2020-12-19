@@ -2,7 +2,9 @@
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Name;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -35,6 +37,7 @@ namespace BullyBot
             provider.GetRequiredService<SchedulerService>();
             provider.GetRequiredService<AlarmService>();
             provider.GetRequiredService<Random>();
+            provider.GetRequiredService<ReminderService>();
             await provider.GetRequiredService<StartupService>().MainAsync();
             await Task.Delay(-1);
         }
@@ -66,7 +69,9 @@ namespace BullyBot
             .AddSingleton<HttpClient>()
             .AddSingleton<SchedulerService>()
             .AddSingleton<AlarmService>()
-            .AddSingleton<Random>();
+            .AddSingleton<Random>()
+            .AddSingleton<ReminderService>()
+            .AddDbContext<BullyBotDbContext>();
 
             // Add loggingservice to the collection													
             //.AddSingleton<Random>()                 // Add random to the collection													

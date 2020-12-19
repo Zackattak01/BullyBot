@@ -18,10 +18,11 @@ namespace BullyBot
         private static List<string> ids = new List<string>();
 
         //private Timer timer; not needed for now.  Timer didn't get GCed as expected
+        private bool intervalExceedsIntMax = false;
 
         public string Id { get; }
-
         public bool IsRecurring { get; }
+        public DateTime TimeToGo { get; }
         public event ScheduledTaskExecuteEventHandler Execute;
 
         public event ReadyForDisposalEventHandler ReadyForDisposal;
@@ -30,12 +31,19 @@ namespace BullyBot
 
         public ScheduledTask(DateTime timeToGo, string id, bool repeat)
         {
-            if (ids.Contains(id))
+            //opt out of task tracking
+            if (id is not null)
             {
-                throw new ArgumentException($"The id: \"{id}\" is already in use");
+                if (ids.Contains(id))
+                {
+                    throw new ArgumentException($"The id: \"{id}\" is already in use");
+                }
+
+                ids.Add(id);
+                Id = id;
             }
 
-            Id = id;
+            TimeToGo = timeToGo;
             IsRecurring = repeat;
 
             if (!InitTimer(timeToGo, repeat))
@@ -54,17 +62,34 @@ namespace BullyBot
             if (milliseconds == null)
                 return false;
 
+            var ms = (double)milliseconds;
+
+            if (ms > int.MaxValue)
+            {
+                intervalExceedsIntMax = true;
+                ms = Math.Clamp(ms, 0, int.MaxValue);
+
+            }
+
 
             Timer timer = new Timer();
             timer.AutoReset = repeat;
-            timer.Elapsed += RaisePublicEvent;
 
-            if (repeat)
-                timer.Elapsed += CorrectInterval;
+            if (intervalExceedsIntMax)
+            {
+                timer.Elapsed += HandleMaxInt;
+            }
             else
-                timer.Elapsed += DisposeTimer;
+            {
+                timer.Elapsed += RaisePublicEvent;
+                if (repeat)
+                    timer.Elapsed += CorrectInterval;
+                else
+                    timer.Elapsed += DisposeTimer;
 
-            timer.Interval = (double)milliseconds;
+            }
+
+            timer.Interval = ms;
             timer.Start();
 
             return true;
@@ -121,6 +146,32 @@ namespace BullyBot
             TimeSpan timeToGo = tommorow - DateTime.Now;
 
             timer.Interval = timeToGo.TotalMilliseconds;
+        }
+
+        private void HandleMaxInt(object source, ElapsedEventArgs e)
+        {
+            Timer timer = (Timer)source;
+
+            TimeSpan ts = TimeToGo - DateTime.Now;
+
+            double ms = ts.TotalMilliseconds;
+
+            if (ts.TotalMilliseconds > int.MaxValue)
+            {
+                ms = Math.Clamp(ms, 0, int.MaxValue);
+            }
+            else
+            {
+                intervalExceedsIntMax = false;
+                timer.Elapsed -= HandleMaxInt;
+
+                if (IsRecurring)
+                    timer.Elapsed += CorrectInterval;
+                else
+                    timer.Elapsed += DisposeTimer;
+            }
+
+            timer.Interval = ts.TotalMilliseconds;
         }
     }
 }
