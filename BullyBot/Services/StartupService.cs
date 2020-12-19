@@ -37,6 +37,8 @@ namespace BullyBot
             //waits until the client is ready before using it
             _client.Ready += async () =>
             {
+
+                _commands.AddTypeReader(typeof(Reminder), new ReminderTypeReader());
                 await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
 
                 //Checks if the bot is the beta bot or not
