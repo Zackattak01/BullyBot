@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BullyBot
 {
     [Group("reminder")]
-    [Alias("remind", "remindme", "remind me")]
+    [Alias("remind", "remindme", "remind me", "reminders")]
     public class ReminderModule : ModuleBase<SocketCommandContext>, IDisposable
     {
         private ReminderService reminderService;
@@ -29,6 +29,7 @@ namespace BullyBot
         }
 
         [Command("")]
+        [Alias("create")]
         [Priority(0)]
         public async Task ReminderAsync([Remainder] Reminder input)
         {
@@ -38,6 +39,7 @@ namespace BullyBot
         }
 
         [Command("list")]
+        [Alias("")]
         [Priority(1)]
         public async Task ListAsync()
         {
