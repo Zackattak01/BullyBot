@@ -22,7 +22,7 @@ namespace BullyBot
             scheduler = provider.GetRequiredService<SchedulerService>();
             client = provider.GetRequiredService<DiscordSocketClient>();
 
-            client.Ready += RescheduleExistingRemindersAsync;
+            client.Ready += RescheduleExistingReminders;
         }
 
         public async Task AddReminderAsync(Reminder reminder)
@@ -46,20 +46,31 @@ namespace BullyBot
             await context.SaveChangesAsync();
         }
 
-        public async Task RescheduleExistingRemindersAsync()
+        public Task RescheduleExistingReminders()
         {
-            var context = serviceProvider.GetRequiredService<BullyBotDbContext>();
-
-            foreach (var reminder in await context.Reminders.ToListAsync())
+            _ = Task.Run(async () =>
             {
-                if (reminder.Time - DateTime.Now <= TimeSpan.Zero)
+                var context = serviceProvider.GetRequiredService<BullyBotDbContext>();
+
+                foreach (var reminder in await context.Reminders.ToListAsync())
                 {
-                    System.Console.WriteLine("Immeditae reschedule");
-                    await ReminderCallbackAsync(reminder);
+                    if (reminder.Time < DateTime.Now)
+                    {
+                        //this code is still buggy hence the console statements
+                        System.Console.WriteLine("Sending missed reminder");
+                        System.Console.WriteLine($"Time now {DateTime.Now}");
+                        System.Console.WriteLine($"Reminder time {reminder.Time}");
+                        await ReminderCallbackAsync(reminder);
+                    }
+                    else
+                        scheduler.ScheduleTask(reminder.Time, null, async (s) => await ReminderCallbackAsync(reminder));
                 }
-                else
-                    scheduler.ScheduleTask(reminder.Time, null, async (s) => await ReminderCallbackAsync(reminder));
-            }
+            });
+
+            //unsubscribe from event
+            //could create a bool value to tell if the reminders have been rescheduled but I think this is a better solution
+            client.Ready -= RescheduleExistingReminders;
+            return Task.CompletedTask;
         }
 
         private async Task ReminderCallbackAsync(Reminder reminder)
