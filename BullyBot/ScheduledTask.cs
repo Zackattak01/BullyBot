@@ -17,7 +17,7 @@ namespace BullyBot
     {
         private static List<string> ids = new List<string>();
 
-        //private Timer timer; not needed for now.  Timer didn't get GCed as expected
+        private Timer timer; //not needed for now.  Timer didn't get GCed as expected
         private bool intervalExceedsIntMax = false;
 
         public string Id { get; }
@@ -27,21 +27,9 @@ namespace BullyBot
 
         public event ReadyForDisposalEventHandler ReadyForDisposal;
 
-
-
         public ScheduledTask(DateTime timeToGo, string id, bool repeat)
         {
-            //opt out of task tracking
-            if (id is not null)
-            {
-                if (ids.Contains(id))
-                {
-                    throw new ArgumentException($"The id: \"{id}\" is already in use");
-                }
-
-                ids.Add(id);
-                Id = id;
-            }
+            Id = id;
 
             TimeToGo = timeToGo;
             IsRecurring = repeat;
@@ -51,10 +39,11 @@ namespace BullyBot
                 throw new InvalidDataException("The time to schedule the time to has already passed");
             }
         }
-
-        public static bool IdInUse(string id)
-            => ids.Contains(id);
-
+        public void Cancel()
+        {
+            timer.Dispose();
+            ReadyForDisposal(this);
+        }
         private bool InitTimer(DateTime timeToGo, bool repeat)
         {
             double? milliseconds = GetMilliseconds(timeToGo, repeat);
@@ -91,6 +80,8 @@ namespace BullyBot
 
             timer.Interval = ms;
             timer.Start();
+
+            this.timer = timer;
 
             return true;
         }
@@ -131,7 +122,6 @@ namespace BullyBot
         private void DisposeTimer(object source, ElapsedEventArgs e)
         {
             (source as IDisposable)?.Dispose();
-            ids.Remove(Id);
             ReadyForDisposal(this);
         }
 
@@ -173,5 +163,6 @@ namespace BullyBot
 
             timer.Interval = ts.TotalMilliseconds;
         }
+
     }
 }

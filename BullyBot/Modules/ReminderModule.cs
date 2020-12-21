@@ -56,6 +56,29 @@ namespace BullyBot
             await ReplyAsync(sendString);
         }
 
+        [Command("remove")]
+        [Alias("cancel")]
+        public async Task RemoveAsync(int id)
+        {
+            var reminder = await dbContext.Reminders.FindAsync(id);
+
+            if (reminder is null)
+            {
+                await ReplyAsync($"A reminder with id: \"{id}\" does not exist.");
+                return;
+            }
+
+            if (reminder.UserId != Context.User.Id)
+            {
+                await ReplyAsync("You cannot remove other peoples reminders!");
+                return;
+            }
+
+            await reminderService.UnscheduleReminder(id);
+
+            await ReplyAsync($"Ok, I will no longer remind you to \"{reminder.Value}\" {reminder.GetTimeString()}");
+        }
+
         public void Dispose()
         {
             scope.Dispose();

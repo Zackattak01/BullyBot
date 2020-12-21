@@ -34,7 +34,7 @@ namespace BullyBot
             await context.SaveChangesAsync();
 
 
-            scheduler.ScheduleTask(reminder.Time, null, async (s) => await ReminderCallbackAsync(reminder));
+            scheduler.ScheduleTask(reminder.Time, reminder.Id.ToString(), async (s) => await ReminderCallbackAsync(reminder));
         }
 
         public async Task RemoveReminderAsync(int id)
@@ -46,6 +46,12 @@ namespace BullyBot
 
             context.Remove(reminder);
             await context.SaveChangesAsync();
+        }
+
+        public async Task UnscheduleReminder(int id)
+        {
+            scheduler.CancelTask(id.ToString());
+            await RemoveReminderAsync(id);
         }
 
         private Task RescheduleExistingReminders()
@@ -66,7 +72,7 @@ namespace BullyBot
                         await ReminderCallbackAsync(reminder);
                     }
                     else
-                        scheduler.ScheduleTask(reminder.Time, null, async (s) => await ReminderCallbackAsync(reminder));
+                        scheduler.ScheduleTask(reminder.Time, reminder.Id.ToString(), async (s) => await ReminderCallbackAsync(reminder));
                 }
             });
 
