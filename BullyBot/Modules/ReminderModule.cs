@@ -65,13 +65,7 @@ namespace BullyBot
             }
 
 
-            await SendPaginatedMessage(Context, new PaginatedMessage().AddPages(builders, 5));
-
-            //var joinedString = string.Join('\n', reminderStrs);
-
-            //var sendString = $"You have {reminderStrs.Count} reminders: \n" + joinedString;
-
-            //await ReplyAsync(sendString);
+            await SendPaginatedMessage(Context, new PaginatedMessage().AddPages(builders, 5), content: $"You have {reminders.Count} reminders:");
         }
 
         [Command("remove")]
