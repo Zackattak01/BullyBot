@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
+    <PackageReference Include="Discord.Interactive" Version="2.3.0-rc" />
     <PackageReference Include="Discord.Net" Version="2.3.0-dev-20201220.5" />
     <PackageReference Include="EFCore.NamingConventions" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />

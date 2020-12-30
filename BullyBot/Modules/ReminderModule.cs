@@ -6,12 +6,14 @@ using Discord;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Discord.Interactive;
+using System.Collections.Generic;
 
 namespace BullyBot
 {
     [Group("reminder")]
     [Alias("remind", "remindme", "remind me", "reminders")]
-    public class ReminderModule : ModuleBase<SocketCommandContext>, IDisposable
+    public class ReminderModule : InteractiveBase<SocketCommandContext>, IDisposable
     {
         private ReminderService reminderService;
 
@@ -33,9 +35,16 @@ namespace BullyBot
         [Priority(0)]
         public async Task ReminderAsync([Remainder] Reminder input)
         {
-            await reminderService.AddReminderAsync(input);
+            var result = await reminderService.AddReminderAsync(input);
 
-            await ReplyAsync($"Ok, I will remind you to \"{input.Value}\" {input.GetTimeString()}");
+            if (result)
+            {
+                await ReplyAsync($"Ok, I will remind you to \"{input.Value}\" {input.GetTimeString()}");
+            }
+            else
+            {
+                await ReplyAsync("Sorry, the time provided has already passed.  Your reminder has not been scheduled");
+            }
         }
 
         [Command("list")]
@@ -43,17 +52,26 @@ namespace BullyBot
         [Priority(1)]
         public async Task ListAsync()
         {
-            var reminderStrs = dbContext.Reminders.AsQueryable()
+            var reminders = dbContext.Reminders.AsQueryable()
             .Where(x => x.UserId == Context.User.Id)
             .OrderBy(x => x.Time)
-            .Select(x => x.ToString())
             .ToList();
 
-            var joinedString = string.Join('\n', reminderStrs);
+            List<EmbedFieldBuilder> builders = new List<EmbedFieldBuilder>();
 
-            var sendString = $"You have {reminderStrs.Count} reminders: \n" + joinedString;
+            foreach (var reminder in reminders)
+            {
+                builders.Add(new EmbedFieldBuilder().WithName(reminder.Id.ToString()).WithValue(reminder.ToString()));
+            }
 
-            await ReplyAsync(sendString);
+
+            await SendPaginatedMessage(Context, new PaginatedMessage().AddPages(builders, 5));
+
+            //var joinedString = string.Join('\n', reminderStrs);
+
+            //var sendString = $"You have {reminderStrs.Count} reminders: \n" + joinedString;
+
+            //await ReplyAsync(sendString);
         }
 
         [Command("remove")]

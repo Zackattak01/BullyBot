@@ -25,8 +25,11 @@ namespace BullyBot
             client.Ready += RescheduleExistingReminders;
         }
 
-        public async Task AddReminderAsync(Reminder reminder)
+        public async Task<bool> AddReminderAsync(Reminder reminder)
         {
+            if (reminder.Time < DateTime.Now)
+                return false;
+
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
 
@@ -35,6 +38,8 @@ namespace BullyBot
 
 
             scheduler.ScheduleTask(reminder.Time, reminder.Id.ToString(), async (s) => await ReminderCallbackAsync(reminder));
+
+            return true;
         }
 
         public async Task RemoveReminderAsync(int id)

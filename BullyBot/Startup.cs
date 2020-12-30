@@ -1,5 +1,6 @@
 ﻿using ConfigurableServices;
 using Discord;
+using Discord.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,7 @@ namespace BullyBot
             provider.GetRequiredService<AlarmService>();
             provider.GetRequiredService<Random>();
             provider.GetRequiredService<ReminderService>();
+            provider.GetRequiredService<InteractiveService>();
             await provider.GetRequiredService<StartupService>().MainAsync();
             await Task.Delay(-1);
         }
@@ -71,7 +73,8 @@ namespace BullyBot
             .AddSingleton<AlarmService>()
             .AddSingleton<Random>()
             .AddSingleton<ReminderService>()
-            .AddDbContext<BullyBotDbContext>();
+            .AddDbContext<BullyBotDbContext>()
+            .AddSingleton<InteractiveService>();
 
             // Add loggingservice to the collection													
             //.AddSingleton<Random>()                 // Add random to the collection													
