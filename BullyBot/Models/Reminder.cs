@@ -40,7 +40,7 @@ namespace BullyBot
 
         public override string ToString()
         {
-            return $"{GetTimeCapitilizeFirstLetter()}: {Value}  (Id: {Id})";
+            return $"{GetTimeCapitilizeFirstLetter()}: {Value}";
         }
 
 

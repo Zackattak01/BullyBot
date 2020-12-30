@@ -61,7 +61,7 @@ namespace BullyBot
 
             foreach (var reminder in reminders)
             {
-                builders.Add(new EmbedFieldBuilder().WithName(reminder.Id.ToString()).WithValue(reminder.ToString()));
+                builders.Add(new EmbedFieldBuilder().WithName("Reminder" + reminder.Id.ToString()).WithValue(reminder.ToString()));
             }
 
 
