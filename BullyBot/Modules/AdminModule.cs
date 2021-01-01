@@ -152,12 +152,7 @@ namespace BullyBot.Modules
             }, null);
         }
 
-        [Command("config reload")]
-        public async Task ConfigReload()
-        {
-            config.Reload();
-            await ReplyAsync("Config Reloaded");
-        }
+
 
     }
 }
