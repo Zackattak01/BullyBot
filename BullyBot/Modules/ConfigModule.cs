@@ -58,8 +58,6 @@ namespace BullyBot
         {
             var backupDir = new DirectoryInfo(configService.BackupPath);
 
-            System.Console.WriteLine(backupDir.ToString());
-
             var backups = backupDir.GetFiles();
 
             var replyString = $"There are {backups.Count()} backups:\n\n";
@@ -85,6 +83,28 @@ namespace BullyBot
                 backup.Delete();
                 await ReplyAsync($"Backup \"{filename}\" removed");
             }
+        }
+
+        [Command("backup restore")]
+        public async Task BackupRestore(string backupName)
+        {
+            backupName = backupName.EndsWith(".zip") ? backupName : backupName += ".zip";
+            var backupDir = new DirectoryInfo(configService.BackupPath);
+
+            var backups = backupDir.GetFiles();
+
+            var backup = backups.FirstOrDefault(x => x.Name == backupName);
+
+            if (backup == null)
+            {
+                await ReplyAsync($"Backup \"{backupName}\" not found!");
+                return;
+            }
+
+            DirectoryInfo configDirInfo = new DirectoryInfo(configService.ConfigPath);
+            configDirInfo.Delete(true);
+            ZipFile.ExtractToDirectory(Path.Join(configService.BackupPath, backupName), configService.ConfigPath);
+            await ReplyAsync("Config restored! (Reload required)");
         }
 
     }
