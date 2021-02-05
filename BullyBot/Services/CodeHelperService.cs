@@ -27,7 +27,7 @@ namespace BullyBot
         public string CreateValidCode(string invalidCode)
         {
             return BegginningBoilerplate + invalidCode + EndingBoilerplate;
-            
+
         }
 
         public (UnloadableAssemblyLoadContext, string) CompileAndLoadAssembly(string code)
@@ -35,27 +35,12 @@ namespace BullyBot
             var tree = SyntaxFactory.ParseSyntaxTree(code);
             string fileName = "exec.dll";
 
-            var systemRefLocation = typeof(object).GetTypeInfo().Assembly.Location;
-            var tasksLocation = typeof(System.Threading.Tasks.Task).GetTypeInfo().Assembly.Location;
-            var discordCoreLocation = typeof(Discord.IChannel).GetTypeInfo().Assembly.Location;
-            var discordRestLocation = typeof(Discord.Rest.RestUserMessage).GetTypeInfo().Assembly.Location;
-            var discordSocketLocation = typeof(Discord.WebSocket.SocketUserMessage).GetTypeInfo().Assembly.Location;
-            var discordCommandLocation = typeof(Discord.Commands.SocketCommandContext).GetTypeInfo().Assembly.Location;
-            var linqLocation = typeof(System.Linq.Enumerable).GetTypeInfo().Assembly.Location;
-
-
-            var systemReference = MetadataReference.CreateFromFile(systemRefLocation);
-            var netStandardRef = MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51").Location);
-            var systemRuntimeRef = MetadataReference.CreateFromFile(Assembly.Load("System.Runtime, Version=4.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a").Location);
-            var discordCoreReference = MetadataReference.CreateFromFile(discordCoreLocation);
-            var discordRestReference = MetadataReference.CreateFromFile(discordRestLocation);
-            var discordSocketReference = MetadataReference.CreateFromFile(discordSocketLocation);
-            var discordCommandReference = MetadataReference.CreateFromFile(discordCommandLocation);
-            var linqReference = MetadataReference.CreateFromFile(linqLocation);
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location));
 
             var compilation = CSharpCompilation.Create(fileName)
                 .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddReferences(systemReference, netStandardRef, systemRuntimeRef, discordCoreReference, discordRestReference, discordSocketReference, discordCommandReference, linqReference)
+                .AddReferences(assemblies.Select(assembly => MetadataReference.CreateFromFile(assembly.Location)))
                 .AddSyntaxTrees(tree);
 
 
