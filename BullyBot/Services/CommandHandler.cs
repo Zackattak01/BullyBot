@@ -19,7 +19,7 @@ namespace BullyBot
             _client = client;
             _provider = provider;
             _client.MessageReceived += HandleCommandAsync;
-            _commands.CommandExecuted += CommandExecutedAsync;
+            _commands.CommandExecuted += CommandExecuted;
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -41,10 +41,12 @@ namespace BullyBot
             await _commands.ExecuteAsync(context, argPos, scope.ServiceProvider);
         }
 
-        private async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
+        private Task CommandExecuted(Optional<CommandInfo> command, ICommandContext context, IResult result)
         {
-            var customContext = context as BullyBotDbContext;
-            await customContext.DisposeAsync();
+            var customContext = context as BullyBotCommandContext;
+
+            customContext.ServiceScope.Dispose();
+            return Task.CompletedTask;
         }
     }
 }

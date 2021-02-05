@@ -7,7 +7,7 @@ namespace BullyBot
 {
     public class BullyBotCommandContext : SocketCommandContext
     {
-        IServiceScope ServiceScope { get; }
+        public IServiceScope ServiceScope { get; }
         public BullyBotCommandContext(DiscordSocketClient client, SocketUserMessage msg, IServiceScope scope) : base(client, msg)
         {
             ServiceScope = scope;

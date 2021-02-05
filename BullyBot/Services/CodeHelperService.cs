@@ -84,11 +84,7 @@ namespace BullyBot
 
             execType.GetMethod("Run").Invoke(execObj, null);
 
-
             alc.Unload();
-
-
-
         }
 
 
