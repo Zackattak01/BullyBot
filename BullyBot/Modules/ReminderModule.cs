@@ -49,10 +49,10 @@ namespace BullyBot
         [Priority(1)]
         public async Task ListAsync()
         {
-            var reminders = dbContext.Reminders.AsQueryable()
+            var reminders = await dbContext.Reminders.AsNoTracking()
             .Where(x => x.UserId == Context.User.Id)
             .OrderBy(x => x.Time)
-            .ToList();
+            .ToListAsync();
 
             List<EmbedFieldBuilder> builders = new List<EmbedFieldBuilder>();
 
