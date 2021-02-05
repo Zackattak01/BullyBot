@@ -9,29 +9,29 @@ using MathEngine.SigFig;
 
 namespace BullyBot.Modules
 {
-	public class MathModule : ModuleBase<SocketCommandContext>
-	{
-		[Command("eval")]
-		public async Task EvalAsync([Remainder] string str)
-		{
-			//foreach (var str in param)
-			//{
-			//	Console.WriteLine(str);
-			//}
-			SigFigCalculator calc = new SigFigCalculator();
-			SigFigCalculatorResult result = calc.Evaluate(str);
+    public class MathModule : ModuleBase<BullyBotCommandContext>
+    {
+        [Command("eval")]
+        public async Task EvalAsync([Remainder] string str)
+        {
+            //foreach (var str in param)
+            //{
+            //	Console.WriteLine(str);
+            //}
+            SigFigCalculator calc = new SigFigCalculator();
+            SigFigCalculatorResult result = calc.Evaluate(str);
 
-			if (result.Success)
-			{
-				await ReplyAsync("Your expression was evaluated:\n\n" +
-					"Unrounded (might be screwed up) = " + result.Value +
-					"\nRounded: " + result.RoundedValue);
-			}
-			else
-			{
-				await ReplyAsync("Sorry your expression could not be evaluated:\n\n" +
-					$"`{result.ErrorMessage}`");
-			}
-		}
-	}
+            if (result.Success)
+            {
+                await ReplyAsync("Your expression was evaluated:\n\n" +
+                    "Unrounded (might be screwed up) = " + result.Value +
+                    "\nRounded: " + result.RoundedValue);
+            }
+            else
+            {
+                await ReplyAsync("Sorry your expression could not be evaluated:\n\n" +
+                    $"`{result.ErrorMessage}`");
+            }
+        }
+    }
 }

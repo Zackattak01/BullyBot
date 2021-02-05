@@ -13,21 +13,18 @@ namespace BullyBot
 {
     [Group("reminder")]
     [Alias("remind", "remindme", "remind me", "reminders")]
-    public class ReminderModule : InteractiveBase<SocketCommandContext>, IDisposable
+    public class ReminderModule : InteractiveBase<BullyBotCommandContext>
     {
         private ReminderService reminderService;
 
         private BullyBotDbContext dbContext;
 
-        private IServiceScope scope;
 
-
-        public ReminderModule(ReminderService service, IServiceProvider provider)
+        public ReminderModule(ReminderService service, BullyBotDbContext dbContext)
         {
             reminderService = service;
 
-            scope = provider.CreateScope();
-            dbContext = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
+            this.dbContext = dbContext;
         }
 
         [Command("")]
@@ -89,11 +86,6 @@ namespace BullyBot
             await reminderService.UnscheduleReminder(id);
 
             await ReplyAsync($"Ok, I will no longer remind you to \"{reminder.Value}\" {reminder.GetTimeString()}");
-        }
-
-        public void Dispose()
-        {
-            scope.Dispose();
         }
     }
 }

@@ -12,12 +12,17 @@ namespace BullyBot.Modules
 {
     [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
     [Name("admin")]
-    public class AdminModule : ModuleBase<SocketCommandContext>
+    public class AdminModule : ModuleBase<BullyBotCommandContext>
     {
         //Disclaimer:  14 days to delete a message is not arbitrary
         //It is a restriction encacted by discord
         //Nothing can be done
         private readonly IConfigService config;
+
+        protected override void BeforeExecute(CommandInfo command)
+        {
+
+        }
 
         public AdminModule(DiscordSocketClient discord, IConfigService config)
         {

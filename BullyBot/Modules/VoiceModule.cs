@@ -10,7 +10,7 @@ using Discord.WebSocket;
 
 namespace BullyBot.Modules
 {
-    public class VoiceModule : ModuleBase<SocketCommandContext>
+    public class VoiceModule : ModuleBase<BullyBotCommandContext>
     {
         private readonly TeamspeakService teamspeakService;
 

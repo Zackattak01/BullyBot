@@ -1,5 +1,7 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -17,6 +19,7 @@ namespace BullyBot
             _client = client;
             _provider = provider;
             _client.MessageReceived += HandleCommandAsync;
+            _commands.CommandExecuted += CommandExecutedAsync;
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -33,8 +36,15 @@ namespace BullyBot
                 return;
 
             //creates command context and executes command
-            SocketCommandContext context = new SocketCommandContext(_client, message);
-            IResult result = await _commands.ExecuteAsync(context, argPos, _provider);
+            var scope = _provider.CreateScope();
+            BullyBotCommandContext context = new BullyBotCommandContext(_client, message, scope);
+            await _commands.ExecuteAsync(context, argPos, scope.ServiceProvider);
+        }
+
+        private async Task CommandExecutedAsync(Optional<CommandInfo> command, ICommandContext context, IResult result)
+        {
+            var customContext = context as BullyBotDbContext;
+            await customContext.DisposeAsync();
         }
     }
 }
