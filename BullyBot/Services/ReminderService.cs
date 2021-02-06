@@ -59,7 +59,18 @@ namespace BullyBot
             await RemoveReminderAsync(id);
         }
 
+        public bool EditReminder(Reminder oldReminder, Reminder newReminder)
+        {
+            // using var scope = serviceProvider.CreateScope();
+            // var context = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
 
+            oldReminder.ChannelId = newReminder.ChannelId;
+            oldReminder.Time = newReminder.Time;
+            oldReminder.Value = newReminder.Value;
+
+            scheduler.CancelTask(oldReminder.Id.ToString());
+            return scheduler.ScheduleTask(oldReminder.Time, oldReminder.Id.ToString(), async (s) => await ReminderCallbackAsync(oldReminder));
+        }
 
         private Task RescheduleExistingReminders()
         {

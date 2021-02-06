@@ -98,14 +98,32 @@ namespace BullyBot
         [Alias("modify")]
         [Priority(1)]
         public async Task EditAsync(int id, [Remainder] Reminder newReminder)
+            => await EditReminderAsync(id, newReminder.ChannelId, newReminder.Time, newReminder.Value);
+
+        [Command("edit content")]
+        [Alias("modify content")]
+        [Priority(1)]
+        public async Task EditContentAsync(int id, [Remainder] string content)
+            => await EditReminderAsync(id, Context.Channel.Id, content: content);
+
+        [Command("edit time")]
+        [Alias("edit date", "modify time", "modify date")]
+        [Priority(1)]
+        public async Task EditContentAsync(int id, [Remainder] DateTime date)
+            => await EditReminderAsync(id, Context.Channel.Id, date: date);
+
+        private async Task EditReminderAsync(int id, ulong? channelId = null, DateTime? date = null, string content = null)
         {
             var reminder = await dbContext.Reminders.FindAsync(id);
+
 
             if (reminder is null)
             {
                 await ReplyAsync($"A reminder with id: \"{id}\" does not exist.");
                 return;
             }
+
+            var newReminder = new Reminder(date ?? reminder.Time, Context.User.Id, channelId ?? reminder.ChannelId, content ?? reminder.Value);
 
             if (reminder.UserId != Context.User.Id)
             {
@@ -119,13 +137,7 @@ namespace BullyBot
                 return;
             }
 
-            reminder.Time = newReminder.Time;
-            reminder.Value = newReminder.Value;
-            reminder.ChannelId = newReminder.ChannelId;
-
-            await reminderService.UnscheduleReminder(reminder.Id);
-
-            var result = await reminderService.AddReminderAsync(reminder);
+            var result = reminderService.EditReminder(reminder, newReminder);
 
             if (result)
             {
@@ -138,10 +150,6 @@ namespace BullyBot
                 await ReplyAsync("Sorry, the time provided has already passed.  Your reminder has been lost to space time"
                 + "(no really its gone idk what happened to it :sweat_smile:");
             }
-
-
-
-
         }
     }
 }

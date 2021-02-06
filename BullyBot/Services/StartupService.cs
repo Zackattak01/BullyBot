@@ -39,6 +39,7 @@ namespace BullyBot
             {
 
                 _commands.AddTypeReader(typeof(Reminder), new ReminderTypeReader());
+                _commands.AddTypeReader(typeof(DateTime), new DateTimeTypeReader());
                 await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
 
                 //Checks if the bot is the beta bot or not
