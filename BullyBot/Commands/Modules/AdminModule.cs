@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -12,7 +12,7 @@ namespace BullyBot.Modules
 {
     [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
     [Name("admin")]
-    public class AdminModule : ModuleBase<SocketCommandContext>
+    public class AdminModule : ModuleBase<BullyBotCommandContext>
     {
         //Disclaimer:  14 days to delete a message is not arbitrary
         //It is a restriction encacted by discord
@@ -151,8 +151,6 @@ namespace BullyBot.Modules
                 x.Deaf = false;
             }, null);
         }
-
-
 
     }
 }

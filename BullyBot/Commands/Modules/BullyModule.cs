@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BullyBot.Modules
 {
-    public class BullyModule : ModuleBase<SocketCommandContext>
+    public class BullyModule : ModuleBase<BullyBotCommandContext>
     {
         private ulong OwnerId;
 

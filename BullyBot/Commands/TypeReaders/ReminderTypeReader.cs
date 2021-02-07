@@ -13,11 +13,6 @@ namespace BullyBot
 
         public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
-
-
-            // if (strs.Length != 2)
-            //     return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, ErrorReason));
-
             var result = HumanReadableTimeParser.ParseTime(input);
 
             if (!result.Success)

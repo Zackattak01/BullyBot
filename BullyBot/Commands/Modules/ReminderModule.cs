@@ -13,21 +13,20 @@ namespace BullyBot
 {
     [Group("reminder")]
     [Alias("remind", "remindme", "remind me", "reminders")]
-    public class ReminderModule : InteractiveBase<SocketCommandContext>, IDisposable
+    public class ReminderModule : InteractiveBase<BullyBotCommandContext>
+
     {
         private ReminderService reminderService;
 
         private BullyBotDbContext dbContext;
 
-        private IServiceScope scope;
 
 
-        public ReminderModule(ReminderService service, IServiceProvider provider)
+        public ReminderModule(ReminderService service, BullyBotDbContext dbContext)
         {
             reminderService = service;
 
-            scope = provider.CreateScope();
-            dbContext = scope.ServiceProvider.GetRequiredService<BullyBotDbContext>();
+            this.dbContext = dbContext;
         }
 
         [Command("")]
@@ -52,10 +51,16 @@ namespace BullyBot
         [Priority(1)]
         public async Task ListAsync()
         {
-            var reminders = dbContext.Reminders.AsQueryable()
+            var reminders = await dbContext.Reminders.AsNoTracking()
             .Where(x => x.UserId == Context.User.Id)
             .OrderBy(x => x.Time)
-            .ToList();
+            .ToListAsync();
+
+            if (reminders.Count == 0)
+            {
+                await ReplyAsync("You have no reminders");
+                return;
+            }
 
             List<EmbedFieldBuilder> builders = new List<EmbedFieldBuilder>();
 
@@ -91,9 +96,62 @@ namespace BullyBot
             await ReplyAsync($"Ok, I will no longer remind you to \"{reminder.Value}\" {reminder.GetTimeString()}");
         }
 
-        public void Dispose()
+        [Command("edit")]
+        [Alias("modify")]
+        [Priority(1)]
+        public async Task EditAsync(int id, [Remainder] Reminder newReminder)
+            => await EditReminderAsync(id, newReminder.ChannelId, newReminder.Time, newReminder.Value);
+
+        [Command("edit content")]
+        [Alias("modify content")]
+        [Priority(1)]
+        public async Task EditContentAsync(int id, [Remainder] string content)
+            => await EditReminderAsync(id, Context.Channel.Id, content: content);
+
+        [Command("edit time")]
+        [Alias("edit date", "modify time", "modify date")]
+        [Priority(1)]
+        public async Task EditContentAsync(int id, [Remainder] DateTime date)
+            => await EditReminderAsync(id, Context.Channel.Id, date: date);
+
+        private async Task EditReminderAsync(int id, ulong? channelId = null, DateTime? date = null, string content = null)
         {
-            scope.Dispose();
+            var reminder = await dbContext.Reminders.FindAsync(id);
+
+
+            if (reminder is null)
+            {
+                await ReplyAsync($"A reminder with id: \"{id}\" does not exist.");
+                return;
+            }
+
+            var newReminder = new Reminder(date ?? reminder.Time, Context.User.Id, channelId ?? reminder.ChannelId, content ?? reminder.Value);
+
+            if (reminder.UserId != Context.User.Id)
+            {
+                await ReplyAsync("You cannot edit other peoples reminders!");
+                return;
+            }
+
+            if (newReminder.Time < DateTime.Now)
+            {
+                await ReplyAsync("Sorry, the time provided has already passed.  Your reminder has not been modified!");
+                return;
+            }
+
+            var result = reminderService.EditReminder(reminder, newReminder);
+
+            if (result)
+            {
+                await ReplyAsync($"Alright I changed that reminder for you.  I will now remind you to \"{reminder.Value}\" {reminder.GetTimeString()}");
+                await dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                //fail case
+                await ReplyAsync("Sorry, the time provided has already passed.  Your reminder has been lost to space time"
+                + "(no really its gone idk what happened to it :sweat_smile:");
+            }
         }
     }
 }

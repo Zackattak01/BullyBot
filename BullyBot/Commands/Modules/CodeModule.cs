@@ -13,7 +13,7 @@ using System.Runtime.Loader;
 
 namespace BullyBot.Modules
 {
-    public class CodeModule : ModuleBase<SocketCommandContext>
+    public class CodeModule : ModuleBase<BullyBotCommandContext>
     {
         public CodeHelperService CodeHelper { get; set; }
 
