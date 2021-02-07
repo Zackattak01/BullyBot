@@ -12,7 +12,9 @@ namespace BullyBot
 {
     public class ConfigService : IConfigService
     {
-        private readonly string ConfigPath;
+        public string ConfigPath { get; }
+
+        public string BackupPath { get; private set; }
 
         private readonly Config configPaths;
 
@@ -79,6 +81,8 @@ namespace BullyBot
             DirectoryInfo dirInfo = new DirectoryInfo(alarmSoundsPath);
             var alarmSoundClips = dirInfo.GetFiles().Select(x => x.FullName);
             config.Add("AlarmSoundPaths", alarmSoundClips);
+
+            BackupPath = configPaths.GetValue("BackupPath");
 
             if (ConfigUpdated != null)
                 ConfigUpdated();

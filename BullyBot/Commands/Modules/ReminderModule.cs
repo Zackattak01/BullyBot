@@ -14,10 +14,12 @@ namespace BullyBot
     [Group("reminder")]
     [Alias("remind", "remindme", "remind me", "reminders")]
     public class ReminderModule : InteractiveBase<BullyBotCommandContext>
+
     {
         private ReminderService reminderService;
 
         private BullyBotDbContext dbContext;
+
 
 
         public ReminderModule(ReminderService service, BullyBotDbContext dbContext)

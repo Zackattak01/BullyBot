@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BullyBot.Modules
 {
+
     public class GameModule : ModuleBase<BullyBotCommandContext>
     {
         [Command("banroulette")]
@@ -29,4 +30,5 @@ namespace BullyBot.Modules
             t.Start();
         }
     }
+
 }

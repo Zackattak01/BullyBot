@@ -9,6 +9,7 @@ using MathEngine.SigFig;
 
 namespace BullyBot.Modules
 {
+
     public class MathModule : ModuleBase<BullyBotCommandContext>
     {
         [Command("eval")]

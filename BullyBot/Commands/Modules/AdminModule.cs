@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -18,11 +18,6 @@ namespace BullyBot.Modules
         //It is a restriction encacted by discord
         //Nothing can be done
         private readonly IConfigService config;
-
-        protected override void BeforeExecute(CommandInfo command)
-        {
-
-        }
 
         public AdminModule(DiscordSocketClient discord, IConfigService config)
         {
@@ -155,13 +150,6 @@ namespace BullyBot.Modules
                 x.Mute = false;
                 x.Deaf = false;
             }, null);
-        }
-
-        [Command("config reload")]
-        public async Task ConfigReload()
-        {
-            config.Reload();
-            await ReplyAsync("Config Reloaded");
         }
 
     }

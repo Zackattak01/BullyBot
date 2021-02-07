@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace BullyBot.Modules
 {
     public class InfoModule : ModuleBase<BullyBotCommandContext>
+
     {
         //loads all bad words from disk and creates a new censor with them
 
