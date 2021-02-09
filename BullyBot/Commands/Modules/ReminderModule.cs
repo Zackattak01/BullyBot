@@ -38,7 +38,7 @@ namespace BullyBot
 
             if (result)
             {
-                await ReplyAsync($"Ok, I will remind you to \"{input.Value}\" {input.GetTimeString()}");
+                await ReplyAsync($"Ok, I will remind you to \"{input.Value}\" {input.GetTimeString()} (Id:{input.Id})");
             }
             else
             {
