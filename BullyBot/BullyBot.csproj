@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Interactive" Version="2.3.0-rc2" />
     <PackageReference Include="Discord.Net" Version="2.3.0-dev-20210121.1" />
     <PackageReference Include="EFCore.NamingConventions" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />
@@ -32,6 +31,7 @@
     <ProjectReference Include="..\..\HumanTimeParser\HumanTimeParser\HumanTimeParser.csproj" />
     <ProjectReference Include="..\..\Significant-Figure-Calculator\MathEngine\MathEngine.csproj" />
     <ProjectReference Include="..\..\Significant-Figure-Calculator\SigFigEngine\MathEngine.SigFig.csproj" />
+    <ProjectReference Include="..\..\Discord.Interactive\Discord.Interactive\Discord.Interactive.csproj" />
   </ItemGroup>
 
 </Project>
