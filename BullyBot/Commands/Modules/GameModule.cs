@@ -25,9 +25,8 @@ namespace BullyBot.Modules
             Emoji emote = new Emoji("\xD83D\xDC4D");
             await message.AddReactionAsync(emote, null);
 
-            //starts the game process and on a new thread
-            Thread t = new Thread(() => new BanRoulette().StartBanRouletteAsync(Context, message));
-            t.Start();
+            //starts the game process and on a new task
+            _ = Task.Run(async () => await new BanRoulette().StartBanRouletteAsync(Context, message));
         }
     }
 
