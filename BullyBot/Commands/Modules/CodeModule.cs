@@ -28,7 +28,12 @@ namespace BullyBot.Modules
 
             if (errors != "")
             {
-                await ReplyAsync(errors);
+                var strs = errors.SplitInParts(2000);
+
+                foreach (var str in strs)
+                {
+                    await ReplyAsync(str);
+                }
                 return;
             }
 

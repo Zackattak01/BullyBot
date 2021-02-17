@@ -191,7 +191,7 @@ namespace BullyBot.Modules
         }
 
         [Command("schedule")]
-        public async Task ScheduleAsync(string schedule)
+        public async Task ScheduleAsync(string schedule = null)
         {
             schedule = schedule.ToLower();
             if (schedule == "half" || schedule == "halfday")
