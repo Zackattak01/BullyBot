@@ -58,6 +58,11 @@ namespace BullyBot
                 config.Add(keyValue.Key, id);
             }
 
+            KeyValueConfigGroup keyValueGroup = configPaths.GetGroup("KeyValue");
+
+            foreach (var keyValue in keyValueGroup)
+                config.Add(keyValue.Key, keyValue.Value);
+
             //Special cases
             Dictionary<SoundClip, string> SoundClipPaths = new Dictionary<SoundClip, string>();
             SoundClipPaths.Add(SoundClip.Connected, configPaths.GetValue("ConnectedSoundPath"));
