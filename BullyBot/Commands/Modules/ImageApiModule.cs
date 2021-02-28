@@ -14,13 +14,13 @@ namespace BullyBot.Modules
     public class ImageApiModule : ModuleBase<BullyBotCommandContext>
     {
         private HttpClient client;
-        private string url;
+        private string baseUrl;
         private string apiKey;
 
         public ImageApiModule(HttpClient client, IConfigService config)
         {
             this.client = client;
-            url = config.GetValue<string>("ImageApiUri");
+            baseUrl = config.GetValue<string>("ImageApiUri");
             apiKey = config.GetValue<string>("ImageApiKey");
         }
 
@@ -31,7 +31,14 @@ namespace BullyBot.Modules
             var bytes = Encoding.UTF8.GetBytes(imageName);
             var encodedString = Convert.ToBase64String(bytes);
 
-            await ReplyAsync($"{url}/{encodedString}.{extension}");
+            var url = $"{baseUrl}/{encodedString}.{extension}";
+
+            var result = await client.GetAsync(url);
+
+            if (result.IsSuccessStatusCode)
+                await ReplyAsync(url);
+            else
+                await ReplyAsync("Image does not exist!"); //assume an error from the server is a 404
         }
 
         [Command("image list")]
@@ -39,7 +46,7 @@ namespace BullyBot.Modules
         [Priority(1)]
         public async Task ListAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var request = new HttpRequestMessage(HttpMethod.Get, baseUrl);
             request.Headers.Add("x-api-key", apiKey);
             var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
