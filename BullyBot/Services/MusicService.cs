@@ -70,20 +70,13 @@ namespace BullyBot
 
                 try
                 {
-                    while (true)
-                    {
-                        await output.CopyToAsync(discord);
-                        System.Console.WriteLine("done copying");
-                    }
-
+                    await output.CopyToAsync(discord);
                 }
                 catch (Exception e)
                 {
                     System.Console.WriteLine(e.ToString());
                 }
                 finally { await discord.FlushAsync(); }
-
-                System.Console.WriteLine("operation finishes");
             }
         }
 
@@ -96,11 +89,11 @@ namespace BullyBot
             return await youtube.Videos.Streams.GetAsync(streamInfo);
         }
 
-        private async Task<Video> SearchVideoAsync(string songName)
-            => await youtube.Search.GetVideosAsync(songName).FirstAsync();
+        private ValueTask<Video> SearchVideoAsync(string songName)
+            => youtube.Search.GetVideosAsync(songName).FirstAsync();
 
 
-        private async Task<StreamManifest> GetManifestAsync(Video video)
-            => await youtube.Videos.Streams.GetManifestAsync(video.Id);
+        private Task<StreamManifest> GetManifestAsync(Video video)
+            => youtube.Videos.Streams.GetManifestAsync(video.Id);
     }
 }
