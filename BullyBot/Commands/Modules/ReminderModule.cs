@@ -99,20 +99,20 @@ namespace BullyBot
         [Command("edit")]
         [Alias("modify")]
         [Priority(1)]
-        public async Task EditAsync(int id, [Remainder] Reminder newReminder)
-            => await EditReminderAsync(id, newReminder.ChannelId, newReminder.Time, newReminder.Value);
+        public Task EditAsync(int id, [Remainder] Reminder newReminder)
+            => EditReminderAsync(id, newReminder.ChannelId, newReminder.Time, newReminder.Value);
 
         [Command("edit content")]
         [Alias("modify content")]
         [Priority(1)]
-        public async Task EditContentAsync(int id, [Remainder] string content)
-            => await EditReminderAsync(id, Context.Channel.Id, content: content);
+        public Task EditContentAsync(int id, [Remainder] string content)
+            => EditReminderAsync(id, Context.Channel.Id, content: content);
 
         [Command("edit time")]
         [Alias("edit date", "modify time", "modify date")]
         [Priority(1)]
-        public async Task EditContentAsync(int id, [Remainder] DateTime date)
-            => await EditReminderAsync(id, Context.Channel.Id, date: date);
+        public Task EditContentAsync(int id, [Remainder] DateTime date)
+            => EditReminderAsync(id, Context.Channel.Id, date: date);
 
         private async Task EditReminderAsync(int id, ulong? channelId = null, DateTime? date = null, string content = null)
         {

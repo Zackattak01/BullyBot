@@ -28,7 +28,7 @@ namespace BullyBot.Modules
 
             if (errors != "")
             {
-                var strs = errors.SplitInParts(2000);
+                var strs = errors.SplitInParts(DiscordConfig.MaxMessageSize);
 
                 foreach (var str in strs)
                 {
