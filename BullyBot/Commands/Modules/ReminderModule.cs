@@ -70,7 +70,7 @@ namespace BullyBot
             }
 
 
-            await SendPaginatedMessage(Context, new PaginatedMessage().AddPages(builders, 5), content: $"You have {reminders.Count} reminders:");
+            await SendPaginatedMessage(Context, new PaginatedMessage(color: new Color(0x2F3136)).AddPages(builders, 5), content: $"You have {reminders.Count} reminders:");
         }
 
         [Command("remove")]
