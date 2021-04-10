@@ -28,7 +28,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\KeyValueConfig\KeyValueConfig\KeyValueConfig.csproj" />
     <ProjectReference Include="..\..\ConfigurableServices\ConfigurableServices\ConfigurableServices.csproj" />
-    <ProjectReference Include="..\..\HumanTimeParser\HumanTimeParser\HumanTimeParser.csproj" />
+    <ProjectReference Include="..\..\HumanTimeParser\src\HumanTimeParser.Core\HumanTimeParser.Core.csproj" />
+    <ProjectReference Include="..\..\HumanTimeParser\src\HumanTimeParser.English\HumanTimeParser.English.csproj" />
     <ProjectReference Include="..\..\Significant-Figure-Calculator\MathEngine\MathEngine.csproj" />
     <ProjectReference Include="..\..\Significant-Figure-Calculator\SigFigEngine\MathEngine.SigFig.csproj" />
     <ProjectReference Include="..\..\Discord.Interactive\Discord.Interactive\Discord.Interactive.csproj" />

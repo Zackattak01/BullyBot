@@ -3,7 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Text;
 using Discord.Commands;
-using HumanTimeParser;
+using HumanTimeParser.Core.Parsing;
+using HumanTimeParser.English;
 
 namespace BullyBot
 {
@@ -13,19 +14,19 @@ namespace BullyBot
 
         public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
-            var result = HumanReadableTimeParser.ParseTime(input);
+            var result = EnglishTimeParser.Parse(input);
 
-            if (!result.Success)
-                return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, result.ErrorReason));
+            if (result is not ISuccessfulTimeParsingResult<DateTime> successfulTimeParsingResult)
+                return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, result.ToString()));
 
 
-            var splitReason = input.Split(' ').Skip((int)result.LastTokenPosition);
+            var splitReason = input.Split(' ').Skip(successfulTimeParsingResult.FirstParsedTokenPosition + 1);
             var reminderValue = string.Join(' ', splitReason);
 
             if (reminderValue.StartsWith("to "))
                 reminderValue = reminderValue.ReplaceFirst("to ", "");
 
-            var reminder = new Reminder((DateTime)result.DateTime, context.User.Id, context.Channel.Id, reminderValue);
+            var reminder = new Reminder(successfulTimeParsingResult.Value, context.User.Id, context.Channel.Id, reminderValue);
 
             return Task.FromResult(TypeReaderResult.FromSuccess(reminder));
         }
