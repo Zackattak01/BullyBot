@@ -191,20 +191,23 @@ namespace BullyBot.Modules
         }
 
         [Command("schedule")]
-        public async Task ScheduleAsync(string schedule = null)
+        public Task ScheduleAsync(string schedule = null)
         {
+            if (schedule is null)
+                return ReplyAsync("Invalid Schedule");
+
             schedule = schedule.ToLower();
             if (schedule == "half" || schedule == "halfday")
             {
-                await ReplyAsync(halfDaySchedule);
+                return ReplyAsync(halfDaySchedule);
             }
             else if (schedule == "full" || schedule == "fullday")
             {
-                await ReplyAsync(fullDaySchedule);
+                return ReplyAsync(fullDaySchedule);
             }
             else
             {
-                await ReplyAsync("Invalid Schedule");
+                return ReplyAsync("Invalid Schedule");
             }
         }
 
