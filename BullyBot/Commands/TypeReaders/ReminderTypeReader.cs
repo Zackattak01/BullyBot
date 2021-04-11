@@ -20,7 +20,7 @@ namespace BullyBot
                 return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, result.ToString()));
 
 
-            var splitReason = input.Split(' ').Skip(successfulTimeParsingResult.FirstParsedTokenPosition + 1);
+            var splitReason = input.Split(' ').Skip(successfulTimeParsingResult.FirstParsedTokenIndex + 1);
             var reminderValue = string.Join(' ', splitReason);
 
             if (reminderValue.StartsWith("to "))
