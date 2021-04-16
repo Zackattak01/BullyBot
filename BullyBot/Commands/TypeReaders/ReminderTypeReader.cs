@@ -10,8 +10,6 @@ namespace BullyBot
 {
     public class ReminderTypeReader : TypeReader
     {
-        public const string ErrorReason = "Reminders follow the following format: \"[time] : [reminder]\"";
-
         public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
             var result = EnglishTimeParser.Parse(input);
