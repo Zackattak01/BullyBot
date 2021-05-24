@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Discord.Webhook;
 
 namespace BullyBot.Modules
 {

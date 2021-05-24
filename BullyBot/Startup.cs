@@ -50,7 +50,7 @@ namespace BullyBot
             {                                       // Add discord to the collection
                 LogLevel = LogSeverity.Verbose,     // Tell the logger to give Verbose amount of info
                 MessageCacheSize = 1000,            // Cache 1,000 messages per channel
-                GatewayIntents = (GatewayIntents?)0b111_1111_1111_1111 //specifies all intents // in binary cause im too lazy too type out all the intents //not actually needed
+                GatewayIntents = GatewayIntents.All
             }))
             .AddSingleton(new CommandService(new CommandServiceConfig
             {                                       // Add the command service to the collection
