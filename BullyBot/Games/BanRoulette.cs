@@ -61,7 +61,7 @@ namespace BullyBot.Games
             }
         }
 
-        private async Task BanRouletteReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3)
+        private async Task BanRouletteReactionAdded(Cacheable<IUserMessage, ulong> arg1, Cacheable<IMessageChannel, ulong> arg2, SocketReaction arg3)
         {
             //excludes the bot from adding itself to the kick list
             if (arg3.User.Value.Id == botMessage.Author.Id)
